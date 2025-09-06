@@ -1,10 +1,10 @@
 import json
+from time import time
 
 class MainBoard:
     def __init__(self):
         self.board = [] #création du tableau vide
         self.fixtures_file = {} #initialisation du dictionnaire de fixtures vide
-        
         
         with open('fixtures/fixtures.json', 'r') as f:
             self.fixtures_file = json.load(f)
@@ -13,9 +13,15 @@ class MainBoard:
             self.board.append({"name": fixture["name"],
                                "channels": {"red": self.get_channel(fixture["name"], "red"),
                                             "green": self.get_channel(fixture["name"], "green"),
-                                            "blue": self.get_channel(fixture["name"], "blue")}
-                                  }
-                                 ) #ajout de chaque fixture au tableau
+                                            "blue": self.get_channel(fixture["name"], "blue")},
+                               "current_color": "black",
+                               "next_color": "black",
+                               "current_priority": 0,
+                               "start_time": time(),
+                               "color_duration": 1000, #durée par défaut en milisecondes
+                               "step_time": time()
+                               }
+                            ) #ajout de chaque fixture au tableau
             print(f"Loaded fixture: {fixture['name']}")
 
     def get_channel(self, p_fixture_name, p_channel_name):
