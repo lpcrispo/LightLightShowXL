@@ -3,7 +3,7 @@ from time import time
 
 class MainBoard:
     def __init__(self):
-        self.board = {} #création du tableau vide
+        self.board = [] #création du tableau vide
         self.last_update_time = time()  # Initialisation du temps de la dernière mise à jour
 
         self.available_fixtures = {} #initialisation du dictionnaire de fixtures vide
@@ -27,24 +27,23 @@ class MainBoard:
         
 
         #populate the board with fixtures and their channels
-        for fixture in self.available_fixtures: #parcours du fichier JSON
-            self.board[fixture["name"]] = {
-                            "channels": [
-                                {"red": {"channel": self.get_channel(fixture["name"], "red"), "value": 255}},
-                                {"green": {"channel": self.get_channel(fixture["name"], "green"), "value": 255}},
-                                {"blue": {"channel": self.get_channel(fixture["name"], "blue"), "value": 255}}
-                            ],
-                               "startup_sequence": "white",
-                               "current_seq_color": "white",
-                               "next_seq_color": "black",
-                               "current_priority": 0,
-                               "last_kick_color": "yellow",
-                               "start_time": self.last_update_time,
-                               "color_duration": 1000, #durée par défaut en milisecondes
-                               "last_step_time": self.last_update_time
-                               }
+        for fixture_name, fixture in self.available_fixtures.items(): #parcours du fichier JSON
+            self.board.append({
+                                "name": fixture_name,
+                                "red": {"id": self.get_channel(fixture_name, "red"), "value": 255},
+                                "green": {"id": self.get_channel(fixture_name, "green"), "value": 255},
+                                "blue": {"id": self.get_channel(fixture_name, "blue"), "value": 255},
+                                "startup_sequence": "white",
+                                "current_seq_color": "white",
+                                "next_seq_color": "black",
+                                "current_priority": 0,
+                                "last_kick_color": "yellow",
+                                "start_time": self.last_update_time,
+                                "color_duration": 1000, #durée par défaut en milisecondes
+                                "last_step_time": self.last_update_time
+                              })
         for fixture in self.board:
-            print(f"Loaded fixture: {fixture['name']} at DMX addresses {fixture['channels']}")
+            print(f"Loaded fixture: {fixture['name']} at DMX addresses {fixture['red']}, {fixture['green']}, {fixture['blue']}")
 
     def get_channel(self, p_fixture_name, p_channel_name):
        return self.available_fixtures[p_fixture_name]["channels"][p_channel_name]["id"]
@@ -56,17 +55,12 @@ class MainBoard:
     def get_color_b(self, p_color_name):
         return self.available_colors[p_color_name]["blue"]
 
-    def get_next_color_in_sequence(self, p_sequence_name, p_current_color):
-        with open('themes/themes.json', 'r') as f:
-            themes = json.load(f)
-        for theme in themes:
-            if theme["name"] == p_sequence_name:
-                seq = theme["seq"]
-                if p_current_color in seq:
-                    current_index = seq.index(p_current_color)
-                    next_index = (current_index + 1) % len(seq)
-                    return seq[next_index]
-        return None
+    def get_next_color_in_theme_by_type(self, p_theme, p_type, p_current_color):
+        sequence = self.available_themes[p_theme][p_type]
+        idx = sequence.index(p_current_color)
+        next_idx = (idx + 1) % len(sequence)
+        return sequence[next_idx]
+
     
     def update_board(self):
         current_time = time()
