@@ -4,40 +4,99 @@ from time import time
 class MainBoard:
     def __init__(self):
         self.board = [] #création du tableau vide
-        self.fixtures_file = {} #initialisation du dictionnaire de fixtures vide
         self.last_update_time = time()  # Initialisation du temps de la dernière mise à jour
         
+        self.available_fixtures = [] #initialisation du dictionnaire de fixtures vide
+        self.available_colors = [] #initialisation du dictionnaire de couleurs vide
+        self.available_themes = [] #initialisation du dictionnaire de thèmes vide
+        self.sequence_colors = [] #initialisation de la séquence de couleurs vide
+        self.current_theme = "startup" #thème par défaut
+        
+        #load definitions from JSON files
         with open('fixtures/fixtures.json', 'r') as f:
-            self.fixtures_file = json.load(f)
+            self.available_fixtures = json.load(f)
+            print(self.available_fixtures)
+        with open('themes/colors.json', 'r') as f:
+            self.available_colors = json.load(f)
+            print(self.available_colors)
+        with open('themes/themes.json', 'r') as f:
+            self.available_themes = json.load(f)
+            print(self.available_themes)
+         # Initialiser sequence_colors selon le current_theme
+        for theme in self.available_themes:
+            if theme["name"] == self.current_theme:
+                self.sequence_colors = theme.get("seq")
+                break
+        
 
-        for fixture in self.fixtures_file["fixtures"]: #parcours du fichier JSON
-            self.board.append({"name": fixture["name"],
-                               "channels": {"red": self.get_channel(fixture["name"], "red"),
-                                            "green": self.get_channel(fixture["name"], "green"),
-                                            "blue": self.get_channel(fixture["name"], "blue")},
-                               "current_color": "black",
-                               "next_color": "black",
+        #populate the board with fixtures and their channels
+        for fixture in self.available_fixtures: #parcours du fichier JSON
+            self.board.append({"name": fixture.get("name"),
+                               "channels": [
+                                   {"red": {"channel": self.get_channel(fixture.get("name"), "red"), "value": 255}},
+                                   {"green": {"channel": self.get_channel(fixture.get("name"), "green"), "value": 255}},
+                                   {"blue": {"channel": self.get_channel(fixture.get("name"), "blue"), "value": 255}}
+                               ],
+                               "startup_sequence": "startup",
+                               "current_seq_color": "white",
+                               "next_seq_color": "black",
                                "current_priority": 0,
+                               "last_kick_color": "yellow",
                                "start_time": self.last_update_time,
                                "color_duration": 1000, #durée par défaut en milisecondes
-                               "step_time": self.last_update_time
+                               "last_step_time": self.last_update_time
                                }
                             ) #ajout de chaque fixture au tableau
-            print(f"Loaded fixture: {fixture['name']}")
+        for fixture in self.board:
+            print(f"Loaded fixture: {fixture.get('name')} at DMX addresses {fixture.get('channels')}")
 
     def get_channel(self, p_fixture_name, p_channel_name):
         # Cherche le fixture correspondant
-        for fixture in self.fixtures_file["fixtures"]:
-            if fixture["name"] == p_fixture_name:
+        for fixture in self.available_fixtures:
+            if fixture.get("name") == p_fixture_name:
                 # Cherche le numéro de channel associé au nom
-                for channel_num, channel_info in fixture["channels"].items():
-                    if channel_info["name"] == p_channel_name:
+                for channel in fixture.get("channels", []):
+                    if channel.get("name") == p_channel_name:
                         # Calcule le numéro DMX absolu
-                        return fixture["dmx_address"] + int(channel_num) - 1
+                        return fixture["dmx_address"] + channel.get("id") - 1
         return None  # Si non trouvé
+    
+    def get_color_rgb(self, p_color_name):
+        if p_color_name in self.available_colors:
+            return self.available_colors[p_color_name]["rgb"]
+        else:
+            return [0, 0, 0]   #black par défaut si la couleur n'existe pas
+        
+    def get_next_color_in_sequence(self, p_sequence_name, p_current_color):
+        with open('themes/themes.json', 'r') as f:
+            themes = json.load(f)
+        for theme in themes:
+            if theme["name"] == p_sequence_name:
+                seq = theme["seq"]
+                if p_current_color in seq:
+                    current_index = seq.index(p_current_color)
+                    next_index = (current_index + 1) % len(seq)
+                    return seq[next_index]
+        return None
     
     def update_board(self):
         current_time = time()
         passed_time = (current_time - self.last_update_time) * 1000  # Convertir en millisecondes
         # print(f"Time since last update: {passed_time} ms")
+        for fixture in self.board:
+            # Logique de mise à jour des couleurs basée sur le temps écoulé
+            if current_time - fixture["last_step_time"] >= fixture["color_duration"] / 1000:
+                # Passer à la couleur suivante dans la séquence
+                if fixture["current_seq_color"] == fixture["next_seq_color"]:
+                    # Si on est à la fin de la séquence, revenir au début
+                    fixture["current_seq_color"] = fixture["next_seq_color"]
+                else:
+                    # Avancer à la couleur suivante
+                    fixture["current_seq_color"] = fixture["next_seq_color"]
+                
+                # Mettre à jour le temps du dernier changement de couleur
+                fixture["last_step_time"] = current_time
+                
+                # Ici, tu peux ajouter le code pour envoyer la nouvelle couleur au matériel DMX
+                print(f"Fixture {fixture['name']} changed to color {fixture['current_seq_color']}")
         self.last_update_time = current_time

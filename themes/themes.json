@@ -1,29 +1,14 @@
-[
-    {
-        "name": "rgby-w",
-        "seq": [
-            "red",
-            "green",
-            "blue",
-            "yellow",
-            "black"
-        ],
-        "kick": [
-            "white"
-        ]
+{
+    "startup": {
+        "seq": ["white", "black"],
+        "kick": ["yellow"]
     },
-    {
-        "name": "sunset",
-        "seq": [
-            "orange",
-            "red",
-            "pink",
-            "purple",
-            "yellow",
-            "black"
-        ],
-        "kick": [
-            "blue"
-        ]
+    "rgby-w": {
+        "seq": ["red", "green", "blue", "yellow", "black"],
+        "kick": ["white"]
+    },
+    "sunset": {
+        "seq": ["orange", "red", "pink", "purple", "yellow", "black"],
+        "kick": ["blue"]
     }
-]
+}
