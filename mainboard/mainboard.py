@@ -1,12 +1,11 @@
 import json
 
-class Mainboard:
-    def __init__(self, json_path="fixtures/fixtures.json"):
-        self.json_path = json_path
-        self.fixtures = self.load_fixtures()
+class MainBoard:
+    def __init__(self):
+        with open('fixtures/fixtures.json', 'r') as f:
+            fixtures_file = json.load(f)
 
-    def load_fixtures(self):
-        with open(self.json_path, "r") as f:
-            data = json.load(f)
-        return data.get("fixtures", [])
-        
+        self.fixtures = [] #création du tableau vide
+        for fixture in fixtures_file["fixtures"]: #parcours du fichier JSON
+            self.fixtures.append({"name": fixture["name"]}) #ajout de chaque fixture au tableau
+            print(f"Loaded fixture: {fixture['name']}")

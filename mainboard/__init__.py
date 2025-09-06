@@ -1,1 +1,1 @@
-from .mainboard import load_fixtures
+from .mainboard import MainBoard
