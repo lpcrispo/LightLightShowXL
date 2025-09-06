@@ -23,10 +23,7 @@ class MainBoard:
             self.available_themes = json.load(f)
             print(self.available_themes)
          # Initialiser sequence_colors selon le current_theme
-        for theme in self.available_themes:
-            if theme["name"] == self.current_theme:
-                self.sequence_colors = theme.get("seq")
-                break
+        self.sequence_colors = self.available_themes["startup"]["sequence"]
         
 
         #populate the board with fixtures and their channels
