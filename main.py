@@ -4,7 +4,7 @@ def main():
     print("Hello, LightLightShowXL!")
     mainboard = MainBoard()
     print("MainBoard créé :", mainboard)
-    print("Fixtures chargées :", mainboard.fixtures)
+    print("Fixtures chargées :", mainboard.board)
 
 if __name__ == "__main__":
     main()
