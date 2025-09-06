@@ -5,6 +5,7 @@ class MainBoard:
     def __init__(self):
         self.board = [] #création du tableau vide
         self.fixtures_file = {} #initialisation du dictionnaire de fixtures vide
+        self.last_update_time = time()  # Initialisation du temps de la dernière mise à jour
         
         with open('fixtures/fixtures.json', 'r') as f:
             self.fixtures_file = json.load(f)
@@ -17,9 +18,9 @@ class MainBoard:
                                "current_color": "black",
                                "next_color": "black",
                                "current_priority": 0,
-                               "start_time": time(),
+                               "start_time": self.last_update_time,
                                "color_duration": 1000, #durée par défaut en milisecondes
-                               "step_time": time()
+                               "step_time": self.last_update_time
                                }
                             ) #ajout de chaque fixture au tableau
             print(f"Loaded fixture: {fixture['name']}")
@@ -34,3 +35,9 @@ class MainBoard:
                         # Calcule le numéro DMX absolu
                         return fixture["dmx_address"] + int(channel_num) - 1
         return None  # Si non trouvé
+    
+    def update_board(self):
+        current_time = time()
+        passed_time = (current_time - self.last_update_time) * 1000  # Convertir en millisecondes
+        # print(f"Time since last update: {passed_time} ms")
+        self.last_update_time = current_time
