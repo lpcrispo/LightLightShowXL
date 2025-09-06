@@ -31,6 +31,18 @@
         "black": {
             "name": "Black",
             "rgb": [0, 0, 0]
+        },
+        "orange": {
+            "name": "Orange",
+            "rgb": [255, 165, 0]
+        },
+        "pink": {
+            "name": "Pink",
+            "rgb": [255, 192, 203]
+        },
+        "purple": {
+            "name": "Purple",
+            "rgb": [128, 0, 128]
         }
     }
 }

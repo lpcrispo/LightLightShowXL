@@ -1,13 +1,28 @@
-{
-    "name": "rgby-w",
-    "seq": [
-        "red",
-        "green",
-        "blue",
-        "yellow",
-        "black"
-    ],
-    "kick": [
-        "white"
-    ]
-}
+[
+    {
+        "name": "rgby-w",
+        "seq": [
+            "red",
+            "green",
+            "blue",
+            "yellow",
+            "black"
+        ],
+        "kick": [
+            "white"
+        ]
+    },
+    {
+        "name": "sunset",
+        "seq": [
+            "orange",
+            "red",
+            "pink",
+            "purple",
+            "yellow"
+        ],
+        "kick": [
+            "blue"
+        ]
+    }
+]
