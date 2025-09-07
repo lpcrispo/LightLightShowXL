@@ -31,6 +31,7 @@ class MainBoard:
             self.board.append({
                                 "name": fixture_name,
                                 "current_type": "sequence", #type de couleur actuelle (sequence, kick)
+                                "dimmer": {"id": self.get_channel(fixture_name, "dimmer"),"value": 255 }, #canal dimmer
                                 "sequence_red": {"id": self.get_channel(fixture_name, "red"), "value": 255},
                                 "sequence_green": {"id": self.get_channel(fixture_name, "green"), "value": 255},
                                 "sequence_blue": {"id": self.get_channel(fixture_name, "blue"), "value": 255},
@@ -49,10 +50,13 @@ class MainBoard:
                                 "kick_blue": {"id": self.get_channel(fixture_name, "blue"), "value": 0},
                               })
         for fixture in self.board:
-            print(f"Loaded fixture: {fixture['name']} at DMX addresses {fixture['sequence_red']['id']}, {fixture['sequence_green']['id']}, {fixture['sequence_blue']['id']}")
+            print(f"Loaded fixture: {fixture['name']} at DMX addr dim:{fixture['dimmer']['id']}, red:{fixture['sequence_red']['id']}, green:{fixture['sequence_green']['id']}, blue:{fixture['sequence_blue']['id']}")
 
     def get_channel(self, p_fixture_name, p_channel_name):
-       return self.available_fixtures[p_fixture_name]["channels"][p_channel_name]["id"]+self.available_fixtures[p_fixture_name]["dmx_address"]-1
+        channels = self.available_fixtures[p_fixture_name]["channels"]
+        if p_channel_name not in channels:
+            return "NA"
+        return channels[p_channel_name]["id"] + self.available_fixtures[p_fixture_name]["dmx_address"] - 1
     
     def get_color_r(self, p_color_name):
         return self.available_colors[p_color_name]["red"] 
