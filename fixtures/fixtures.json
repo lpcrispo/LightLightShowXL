@@ -11,7 +11,8 @@
                 "blue": {"id":3,"default": 0, "min": 0, "max": 255},
                 "white": {"id":4,"default": 0, "min": 0, "max": 255},
                 "dimmer": {"id":5,"default": 255, "min": 0, "max": 255}
-            }
+            },
+            "kick_respond": true
         },
         "LED Par 64 2": {
             "name": "LED Par 64 2",
@@ -25,7 +26,8 @@
                 "blue": {"id":3,"default": 0, "min": 0, "max": 255},
                 "white": {"id":4,"default": 0, "min": 0, "max": 255},
                 "dimmer": {"id":5,"default": 255, "min": 0, "max": 255}
-            }
+            },
+            "kick_respond": true
         },
         "Moving Head Spot 1": {
             "name": "Moving Head Spot 1",
@@ -50,6 +52,7 @@
                 "prism": {"id":14,"default": 0, "min": 0, "max": 255},
                 "focus": {"id":15,"default": 0, "min": 0, "max": 255},
                 "reset": {"id":16,"default": 0, "min": 0, "max": 255}
-            }
+            },
+            "kick_respond": false
         }
 }
