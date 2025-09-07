@@ -2,7 +2,7 @@ import json
 from time import time
 
 class MainBoard:
-    def __init__(self):
+    def __init__(self, p_theme="startup"):
         self.board = [] #création du tableau vide
         self.last_update_time = time()  # Initialisation du temps de la dernière mise à jour
 
@@ -10,7 +10,7 @@ class MainBoard:
         self.available_colors = {} #initialisation du dictionnaire de couleurs vide
         self.available_themes = {} #initialisation du dictionnaire de thèmes vide
         self.sequence_colors = {} #initialisation de la séquence de couleurs vide
-        self.current_theme = "sunset" #thème par défaut
+        self.current_theme = p_theme #thème par défaut
         
         #load definitions from JSON files
         with open('fixtures/fixtures.json', 'r') as f:

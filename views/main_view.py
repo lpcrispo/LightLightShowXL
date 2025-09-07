@@ -13,9 +13,15 @@ class MainView(tk.Tk):
         top_frame.pack(anchor='nw', padx=10, pady=10, fill='x')
         
         # Section audio en haut à gauche
-        audio_selector = AudioDeviceSelector(top_frame)
-        audio_selector.pack(side='left')
+        self.audio_selector = AudioDeviceSelector(top_frame)
+        self.audio_selector.pack(side='left')
 
-        # Bouton Start en haut juste à droite de l'autre bloc
-        start_btn = StartButton(top_frame, start_callback)
-        start_btn.pack(side='left')
+        # Passe une lambda qui fournit l'index input choisi
+        start_btn = StartButton(
+            top_frame,
+            start_callback=lambda: start_callback(
+                self.audio_selector.get_selected_input_device_index(),
+                self.audio_selector.get_selected_output_device_index()
+            )
+        )
+        start_btn.pack(side='left', padx=10)

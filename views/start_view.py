@@ -9,5 +9,6 @@ class StartButton(tk.Frame):
         self.button.pack(anchor='nw', padx=10, pady=10)
 
     def start_app(self):
-        threading.Thread(target=self.start_callback, daemon=True).start()
+        if self.start_callback:
+            threading.Thread(target=self.start_callback, daemon=True).start()
         self.button.config(state=tk.DISABLED)
