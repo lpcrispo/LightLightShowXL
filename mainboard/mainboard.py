@@ -46,7 +46,7 @@ class MainBoard:
             print(f"Loaded fixture: {fixture['name']} at DMX addresses {fixture['red']}, {fixture['green']}, {fixture['blue']}")
 
     def get_channel(self, p_fixture_name, p_channel_name):
-       return self.available_fixtures[p_fixture_name]["channels"][p_channel_name]["id"]
+       return self.available_fixtures[p_fixture_name]["channels"][p_channel_name]["id"]+self.available_fixtures[p_fixture_name]["dmx_address"]-1
     
     def get_color_r(self, p_color_name):
         return self.available_colors[p_color_name]["red"]
@@ -73,9 +73,11 @@ class MainBoard:
                 if fixture["current_seq_color"] == fixture["next_seq_color"]:
                     # Si on est à la fin de la séquence, revenir au début
                     fixture["current_seq_color"] = fixture["next_seq_color"]
+                    fixture["start_time"] = current_time
                 else:
                     # Avancer à la couleur suivante
                     fixture["current_seq_color"] = fixture["next_seq_color"]
+                    fixture["start_time"] = current_time
                 
                 # Mettre à jour le temps du dernier changement de couleur
                 fixture["last_step_time"] = current_time
