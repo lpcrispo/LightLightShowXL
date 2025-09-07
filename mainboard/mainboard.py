@@ -10,7 +10,7 @@ class MainBoard:
         self.available_colors = {} #initialisation du dictionnaire de couleurs vide
         self.available_themes = {} #initialisation du dictionnaire de thèmes vide
         self.sequence_colors = {} #initialisation de la séquence de couleurs vide
-        self.current_theme = "startup" #thème par défaut
+        self.current_theme = "sunset" #thème par défaut
         
         #load definitions from JSON files
         with open('fixtures/fixtures.json', 'r') as f:
@@ -23,25 +23,26 @@ class MainBoard:
             self.available_themes = json.load(f)
             print(self.available_themes)
          # Initialiser sequence_colors selon le current_theme
-        self.sequence_colors = self.available_themes["startup"]["sequence"]
-        
+        self.sequence_colors = self.available_themes[self.current_theme]["sequence"]
+        self.kick_colors = self.available_themes[self.current_theme]["kick"]
 
         #populate the board with fixtures and their channels
         for fixture_name, fixture in self.available_fixtures.items(): #parcours du fichier JSON
             self.board.append({
                                 "name": fixture_name,
                                 "current_type": "sequence", #type de couleur actuelle (sequence, kick)
+                                "dimmer": {"id": self.get_channel(fixture_name, "dimmer"),"value": 255 }, #canal dimmer
                                 "sequence_red": {"id": self.get_channel(fixture_name, "red"), "value": 255},
                                 "sequence_green": {"id": self.get_channel(fixture_name, "green"), "value": 255},
                                 "sequence_blue": {"id": self.get_channel(fixture_name, "blue"), "value": 255},
-                                "sequence_current_color": "white", #couleur actuelle dans la séquence
+                                "sequence_current_color": self.sequence_colors[0], # première couleur du thème
                                 "sequence_intensity": 1, #intensité actuelle dans la séquence (0-100%)
                                 "sequence_color_start_time": self.last_update_time, #temps de début de la couleur actuelle
                                 "sequence_color_duration": 1, #durée par défaut en milisecondes
                                 "sequence_fade_duration": 0.5, #durée de fondu par défaut en milisecondes
-                                "sequence_next_color": "black", #couleur suivante dans la séquence
+                                "sequence_next_color": self.sequence_colors[1] if len(self.sequence_colors) > 1 else self.sequence_colors[0],
                                 "kick_respond": fixture["kick_respond"], #indique si le kick est activé pour cette fixture
-                                "kick_current_color": "yellow", #couleur actuelle de kick
+                                "kick_current_color": self.kick_colors[0], # première couleur du thème
                                 "kick_activated": False, #indique si le kick est activé
                                 "kick_duration": 0.2, #durée du kick en milisecondes
                                 "kick_red": {"id": self.get_channel(fixture_name, "red"), "value": 0},
@@ -49,10 +50,13 @@ class MainBoard:
                                 "kick_blue": {"id": self.get_channel(fixture_name, "blue"), "value": 0},
                               })
         for fixture in self.board:
-            print(f"Loaded fixture: {fixture['name']} at DMX addresses {fixture['sequence_red']['id']}, {fixture['sequence_green']['id']}, {fixture['sequence_blue']['id']}")
+            print(f"Loaded fixture: {fixture['name']} at DMX addr dim:{fixture['dimmer']['id']}, red:{fixture['sequence_red']['id']}, green:{fixture['sequence_green']['id']}, blue:{fixture['sequence_blue']['id']}")
 
     def get_channel(self, p_fixture_name, p_channel_name):
-       return self.available_fixtures[p_fixture_name]["channels"][p_channel_name]["id"]+self.available_fixtures[p_fixture_name]["dmx_address"]-1
+        channels = self.available_fixtures[p_fixture_name]["channels"]
+        if p_channel_name not in channels:
+            return "NA"
+        return channels[p_channel_name]["id"] + self.available_fixtures[p_fixture_name]["dmx_address"] - 1
     
     def get_color_r(self, p_color_name):
         return self.available_colors[p_color_name]["red"] 
@@ -86,9 +90,9 @@ class MainBoard:
         p_fixture["sequence_blue"]["value"] = int(self.get_color_b(p_current_color) + (self.get_color_b(p_new_color) - self.get_color_b(p_current_color)) * p_percent)
 
     def update_kick_color_to_next(self, p_fixture, p_current_color, p_seq_r, p_seq_g, p_seq_b, p_percent):
-        p_fixture["kick_red"]["value"] = int(self.get_color_r(p_current_color) + (self.get_color_r(p_seq_r) - self.get_color_r(p_current_color)) * p_percent)
-        p_fixture["kick_green"]["value"] = int(self.get_color_g(p_current_color) + (self.get_color_g(p_seq_g) - self.get_color_g(p_current_color)) * p_percent)
-        p_fixture["kick_blue"]["value"] = int(self.get_color_b(p_current_color) + (self.get_color_b(p_seq_b) - self.get_color_b(p_current_color)) * p_percent)
+        p_fixture["kick_red"]["value"] = int(self.get_color_r(p_current_color) + (p_seq_r - self.get_color_r(p_current_color)) * p_percent)
+        p_fixture["kick_green"]["value"] = int(self.get_color_g(p_current_color) + (p_seq_g - self.get_color_g(p_current_color)) * p_percent)
+        p_fixture["kick_blue"]["value"] = int(self.get_color_b(p_current_color) + (p_seq_b - self.get_color_b(p_current_color)) * p_percent)
 
     def activate_kick(self):
         current_time = time()
