@@ -80,10 +80,26 @@ class MainBoard:
         p_fixture["sequence_green"]["value"] = int(p_fixture["sequence_green"]["value"] * intensity)
         p_fixture["sequence_blue"]["value"] = int(p_fixture["sequence_blue"]["value"] * intensity)
 
-    def update_color_to_next(self, p_fixture, p_current_color, p_new_color, p_percent):
+    def update_sequence_color_to_next(self, p_fixture, p_current_color, p_new_color, p_percent):
         p_fixture["sequence_red"]["value"] = int(self.get_color_r(p_current_color) + (self.get_color_r(p_new_color) - self.get_color_r(p_current_color)) * p_percent)
         p_fixture["sequence_green"]["value"] = int(self.get_color_g(p_current_color) + (self.get_color_g(p_new_color) - self.get_color_g(p_current_color)) * p_percent)
         p_fixture["sequence_blue"]["value"] = int(self.get_color_b(p_current_color) + (self.get_color_b(p_new_color) - self.get_color_b(p_current_color)) * p_percent)
+
+    def update_kick_color_to_next(self, p_fixture, p_current_color, p_seq_r, p_seq_g, p_seq_b, p_percent):
+        p_fixture["kick_red"]["value"] = int(self.get_color_r(p_current_color) + (self.get_color_r(p_seq_r) - self.get_color_r(p_current_color)) * p_percent)
+        p_fixture["kick_green"]["value"] = int(self.get_color_g(p_current_color) + (self.get_color_g(p_seq_g) - self.get_color_g(p_current_color)) * p_percent)
+        p_fixture["kick_blue"]["value"] = int(self.get_color_b(p_current_color) + (self.get_color_b(p_seq_b) - self.get_color_b(p_current_color)) * p_percent)
+
+    def activate_kick(self):
+        current_time = time()
+        for fixture in self.board:
+            if fixture["kick_respond"]:
+                fixture["kick_activated"] = True
+                fixture["kick_start_time"] = current_time
+                fixture["kick_current_color"] = self.get_next_color_in_theme_by_type(self.current_theme, "kick", fixture["kick_current_color"])
+                fixture["kick_red"]["value"] = self.get_color_r(fixture["kick_current_color"])
+                fixture["kick_green"]["value"] = self.get_color_g(fixture["kick_current_color"])
+                fixture["kick_blue"]["value"] = self.get_color_b(fixture["kick_current_color"])
 
     def update_board(self):
         current_time = time()
@@ -105,9 +121,17 @@ class MainBoard:
             # Vérifie si la durée de la couleur actuelle est à moitié écoulée
             elif fade_start <= elapsed < fade_end:
                 percent = min((elapsed - fade_start) / fade_duration, 1)
-                self.update_color_to_next(fixture, fixture["sequence_current_color"], fixture["sequence_next_color"], percent)
+                self.update_sequence_color_to_next(fixture, fixture["sequence_current_color"], fixture["sequence_next_color"], percent)
             else:
                 pass
             self.apply_intensity_modulation(fixture)
+        for fixture in self.board:
+            if fixture["kick_activated"]:
+                kick_elapsed = current_time - fixture["kick_start_time"]
+                if kick_elapsed >= fixture["kick_duration"]:
+                    fixture["kick_activated"] = False
+                else:
+                    # Appliquer l'interpolation vers la couleur de la sequence active
+                    self.update_kick_color_to_next(fixture, fixture["kick_current_color"], fixture["sequence_red"]["value"], fixture["sequence_green"]["value"], fixture["sequence_blue"]["value"], kick_elapsed / fixture["kick_duration"])
         self.last_update_time = current_time
         
