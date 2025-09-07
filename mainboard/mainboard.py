@@ -107,7 +107,7 @@ class MainBoard:
 
     def update_board(self):
         current_time = time()
-        # Parcours de chaque fixture pour mettre à jour sa couleur
+        # Parcours de chaque fixture pour mettre à jour sa couleur et son état
         for fixture in self.board:
             elapsed = current_time - fixture["sequence_color_start_time"]
             color_duration = fixture["sequence_color_duration"] 
