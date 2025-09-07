@@ -1,0 +1,13 @@
+{
+    "red":     {"red":255, "green":0, "blue":0},
+    "green":   {"red":0, "green":255, "blue":0},
+    "blue":    {"red":0, "green":0, "blue":255},
+    "yellow":  {"red":255, "green":255, "blue":0},
+    "cyan":    {"red":0, "green":255, "blue":255},
+    "magenta": {"red":255, "green":0, "blue":255},
+    "white":   {"red":255, "green":255, "blue":255},
+    "black":   {"red":0, "green":0, "blue":0},
+    "orange":  {"red":255, "green":165, "blue":0},
+    "pink":    {"red":255, "green":192, "blue":203},
+    "purple":  {"red":128, "green":0, "blue":128}
+}

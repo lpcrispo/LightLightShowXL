@@ -1,0 +1,58 @@
+{
+    "LED Par 64 1": {
+            "name": "LED Par 64 1",
+            "type": "par",
+            "manufacturer": "Generic",
+            "dmx_address": 1,
+            "channel_count": 5,
+            "channels": {
+                "red": {"id":1,"default": 0, "min": 0, "max": 255},
+                "green": {"id":2,"default": 0, "min": 0, "max": 255},
+                "blue": {"id":3,"default": 0, "min": 0, "max": 255},
+                "white": {"id":4,"default": 0, "min": 0, "max": 255},
+                "dimmer": {"id":5,"default": 255, "min": 0, "max": 255}
+            },
+            "kick_respond": true
+        },
+        "LED Par 64 2": {
+            "name": "LED Par 64 2",
+            "type": "par",
+            "manufacturer": "Generic",
+            "dmx_address": 6,
+            "channel_count": 5,
+            "channels": {
+                "red": {"id":1,"default": 0, "min": 0, "max": 255},
+                "green": {"id":2,"default": 0, "min": 0, "max": 255},
+                "blue": {"id":3,"default": 0, "min": 0, "max": 255},
+                "white": {"id":4,"default": 0, "min": 0, "max": 255},
+                "dimmer": {"id":5,"default": 255, "min": 0, "max": 255}
+            },
+            "kick_respond": true
+        },
+        "Moving Head Spot 1": {
+            "name": "Moving Head Spot 1",
+            "type": "moving_head",
+            "manufacturer": "Generic",
+            "dmx_address": 12,
+            "channel_count": 16,
+            "channels": {
+                "pan_coarse": {"id":1,"default": 0, "min": 0, "max": 255},
+                "pan_fine": {"id":2,"default": 0, "min": 0, "max": 255},
+                "tilt_coarse": {"id":3,"default": 0, "min": 0, "max": 255},
+                "tilt_fine": {"id":4,"default": 0, "min": 0, "max": 255},
+                "pan_tilt_speed": {"id":5,"default": 0, "min": 0, "max": 255},
+                "dimmer": {"id":6,"default": 0, "min": 0, "max": 255},
+                "shutter_strobe": {"id":7,"default": 0, "min": 0, "max": 255},
+                "red": {"id":8,"default": 0, "min": 0, "max": 255},
+                "green": {"id":9,"default": 0, "min": 0, "max": 255},
+                "blue": {"id":10,"default": 0, "min": 0, "max": 255},
+                "white": {"id":11,"default": 0, "min": 0, "max": 255},
+                "color_wheel": {"id":12,"default": 0, "min": 0, "max": 255},
+                "gobo_wheel": {"id":13,"default": 0, "min": 0, "max": 255},
+                "prism": {"id":14,"default": 0, "min": 0, "max": 255},
+                "focus": {"id":15,"default": 0, "min": 0, "max": 255},
+                "reset": {"id":16,"default": 0, "min": 0, "max": 255}
+            },
+            "kick_respond": false
+        }
+}
