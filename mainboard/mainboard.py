@@ -33,7 +33,7 @@ class MainBoard:
                                 "red": {"id": self.get_channel(fixture_name, "red"), "value": 255},
                                 "green": {"id": self.get_channel(fixture_name, "green"), "value": 255},
                                 "blue": {"id": self.get_channel(fixture_name, "blue"), "value": 255},
-                                "startup_sequence": "white",
+                                "current_type": "sequence",
                                 "current_seq_color": "white",
                                 "next_seq_color": "black",
                                 "current_priority": 0,
@@ -70,17 +70,15 @@ class MainBoard:
             # Logique de mise à jour des couleurs basée sur le temps écoulé
             if current_time - fixture["last_step_time"] >= fixture["color_duration"] / 1000:
                 # Passer à la couleur suivante dans la séquence
-                if fixture["current_seq_color"] == fixture["next_seq_color"]:
-                    # Si on est à la fin de la séquence, revenir au début
-                    fixture["current_seq_color"] = fixture["next_seq_color"]
-                    fixture["start_time"] = current_time
-                else:
-                    # Avancer à la couleur suivante
-                    fixture["current_seq_color"] = fixture["next_seq_color"]
-                    fixture["start_time"] = current_time
+                fixture["current_seq_color"] = fixture["next_seq_color"]
+                fixture["next_seq_color"] = self.get_next_color_in_theme_by_type(self.current_theme, fixture["current_type"], fixture["next_seq_color"])
+                fixture["red"]["value"] = self.get_color_r(fixture["current_seq_color"])
+                fixture["green"]["value"] = self.get_color_g(fixture["current_seq_color"])
+                fixture["blue"]["value"] = self.get_color_b(fixture["current_seq_color"])
                 
                 # Mettre à jour le temps du dernier changement de couleur
                 fixture["last_step_time"] = current_time
+                fixture["start_time"] = current_time
                 
                 # Ici, tu peux ajouter le code pour envoyer la nouvelle couleur au matériel DMX
                 print(f"Fixture {fixture['name']} changed to color {fixture['current_seq_color']}")
