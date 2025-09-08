@@ -154,6 +154,11 @@ class KickDetector:
 
             # Stockage pour baseline
             self._energy_history.append(self._smoothed_energy)
+            
+            # Ajout : stocker aussi l'énergie brute pour la détection de pics
+            if not hasattr(self, '_raw_energy_history'):
+                self._raw_energy_history = deque(maxlen=10)
+            self._raw_energy_history.append(normalized_energy)
 
             # Détection onset basée sur le flux spectral
             onset_detected = False
@@ -194,17 +199,22 @@ class KickDetector:
                       f"std={std_energy:6.3f} thr={threshold:6.3f} "
                       f"flux={flux:6.1f} onset={onset_detected}")
 
-            # LOGIQUE DE DÉTECTION MODIFIÉE : OU au lieu de ET
+             # LOGIQUE DE DÉTECTION MODIFIÉE : OU au lieu de ET
             energy_trigger = self._smoothed_energy > threshold
+            
+            # Détection alternative : pic d'énergie brute (sans lissage) - CORRIGÉE
+            raw_energy_trigger = False
+            if len(self._raw_energy_history) >= 5:
+                recent_raw = list(self._raw_energy_history)[-5:]  # 5 dernières valeurs d'énergie brute
+                max_recent = max(recent_raw[:-1])  # Maximum des 4 précédentes
+                if normalized_energy > max_recent * 1.25:  # RÉDUIT de 1.3 à 1.25 (plus sensible)
+                    raw_energy_trigger = True
             
             # Option 1: Déclenchement par énergie OU onset (plus permissif)
             if self.use_onset_detection:
-                trigger_condition = energy_trigger or onset_detected
+                trigger_condition = energy_trigger or onset_detected or raw_energy_trigger
             else:
-                trigger_condition = energy_trigger
-            
-            # Option 2: Si vous voulez garder ET mais avec des seuils plus bas
-            # trigger_condition = energy_trigger and onset_detected
+                trigger_condition = energy_trigger or raw_energy_trigger
 
             if trigger_condition:
                 now = time.time()
@@ -213,9 +223,11 @@ class KickDetector:
                     try:
                         self.mainboard.activate_kick()
                         if self.debug:
-                            trigger_type = "ENERGY" if energy_trigger else ""
-                            trigger_type += "+ONSET" if onset_detected else ""
-                            print(f"🥁 KICK DETECTED! ({trigger_type})")
+                            trigger_type = []
+                            if energy_trigger: trigger_type.append("ENERGY")
+                            if onset_detected: trigger_type.append("ONSET") 
+                            if raw_energy_trigger: trigger_type.append("RAW")
+                            print(f"🥁 KICK DETECTED! ({'+'.join(trigger_type)}) raw={raw_energy_trigger}")
                     except Exception as e:
                         print(f"KickDetector activate_kick error: {e}")
 
