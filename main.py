@@ -10,9 +10,14 @@ def app_logic(input_device_index, output_device_index):
     print("App running...")
     mainboard = MainBoard("black and white kick")
     artnet = ArtNetSender("192.168.18.28", 0, 6454)
-    beatCalculator = BeatCalculator(mainboard)  # Renommer pour cohérence
-    beatCalculator.start()  # Démarrer le thread BeatCalculator
-    print("BeatCalculator thread started...")
+    
+    if input_device_index is not None:
+        beatCalculator = BeatCalculator(mainboard, input_device_index)
+        beatCalculator.start()  # Démarrer le thread BeatCalculator
+        print("BeatCalculator thread started...")
+    else:
+        beatCalculator = None
+        print("Aucun périphérique input sélectionné. Pas de BeatCalculator.")
 
     # Audio monitoring (input -> output)
     if input_device_index is not None and output_device_index is not None:
