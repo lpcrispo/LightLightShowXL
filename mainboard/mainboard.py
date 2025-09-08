@@ -105,6 +105,17 @@ class MainBoard:
                 fixture["kick_green"]["value"] = self.get_color_g(fixture["kick_current_color"])
                 fixture["kick_blue"]["value"] = self.get_color_b(fixture["kick_current_color"])
 
+    # Met à jour la durée des séquences et des fondus en fonction du BPM
+    # la duration dure 2 beats, le fade 1 beat  
+    def update_sequence_duration_and_fade_from_bpm(self, p_bpm):
+        print(f"Updating sequence durations from BPM: {p_bpm}")
+        if p_bpm <= 0:
+            return
+        beat_duration = 60.0 / p_bpm
+        for fixture in self.board:
+            fixture["sequence_color_duration"] = beat_duration
+            fixture["sequence_fade_duration"] = beat_duration / 2
+
     def update_board(self):
         current_time = time()
         # Parcours de chaque fixture pour mettre à jour sa couleur et son état

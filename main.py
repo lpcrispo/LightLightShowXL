@@ -4,6 +4,7 @@ from mainboard.mainboard import MainBoard
 from views.main_view import MainView
 from kickdetector.kickdetector import KickDetector
 from audio.output import AudioPassthrough
+from audio.bpmdetector import BPMDetector  # Nouveau import
 
 def app_logic(input_device_index, output_device_index):
     print("App running...")
@@ -33,9 +34,24 @@ def app_logic(input_device_index, output_device_index):
             trigger_factor=0.9,      # Réduit de 1.2 à 1 (plus sensible)
             onset_threshold=0.15,    # Plus sensible
             smoothing_alpha=0.4,     # Plus réactif
-            use_onset_detection=True # Active la détection d'onset
+            use_onset_detection=True, # Active la détection d'onset
+            debug=False   
         )
         kd.start()
+        
+        # Nouveau : Démarre le détecteur de BPM
+        bpm_detector = BPMDetector(
+            mainboard=mainboard,
+            input_device_index=input_device_index,
+            bpm_range=(60, 180),
+            update_interval=1.0,
+            smoothing_factor=0.8,
+            onset_threshold=0.1,
+            history_length=15,
+            debug=True  # ACTIVÉ pour voir ce qui se passe
+        )
+        bpm_detector.start()
+        print("BPM detector started...")
     else:
         print("Aucun périphérique input sélectionné. Pas de détection kick.")
 
