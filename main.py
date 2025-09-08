@@ -4,13 +4,16 @@ from mainboard.mainboard import MainBoard
 from views.main_view import MainView
 from kickdetector.kickdetector import KickDetector
 from audio.output import AudioPassthrough
-from audio.bpmdetector import BPMDetector  # Nouveau import
+from audio.beatcalculator import BeatCalculator  # Nouveau import
 
 def app_logic(input_device_index, output_device_index):
     print("App running...")
     mainboard = MainBoard("black and white kick")
     artnet = ArtNetSender("192.168.18.28", 0, 6454)
-    
+    beatCalculator = BeatCalculator(mainboard)  # Renommer pour cohérence
+    beatCalculator.start()  # Démarrer le thread BeatCalculator
+    print("BeatCalculator thread started...")
+
     # Audio monitoring (input -> output)
     if input_device_index is not None and output_device_index is not None:
         monitor = AudioPassthrough(
@@ -28,8 +31,10 @@ def app_logic(input_device_index, output_device_index):
     
 # Démarre kick detector (si device sélectionné)
     if input_device_index is not None:
+        
         kd = KickDetector(
             mainboard=mainboard,
+            beatCalculator=beatCalculator,  # Passe l'instance de BeatCalculator
             input_device_index=input_device_index,
             trigger_factor=0.9,      # Réduit de 1.2 à 1 (plus sensible)
             onset_threshold=0.15,    # Plus sensible
@@ -38,20 +43,6 @@ def app_logic(input_device_index, output_device_index):
             debug=False   
         )
         kd.start()
-        
-        # Nouveau : Démarre le détecteur de BPM
-        bpm_detector = BPMDetector(
-            mainboard=mainboard,
-            input_device_index=input_device_index,
-            bpm_range=(60, 180),
-            update_interval=1.0,
-            smoothing_factor=0.8,
-            onset_threshold=0.1,
-            history_length=15,
-            debug=True  # ACTIVÉ pour voir ce qui se passe
-        )
-        bpm_detector.start()
-        print("BPM detector started...")
     else:
         print("Aucun périphérique input sélectionné. Pas de détection kick.")
 

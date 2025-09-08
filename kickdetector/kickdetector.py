@@ -16,6 +16,7 @@ class KickDetector:
     def __init__(
         self,
         mainboard,
+        beatCalculator,
         input_device_index,
         sample_rate=44100,
         block_size=1024,         # Augmenté pour meilleure résolution fréquentielle
@@ -32,6 +33,7 @@ class KickDetector:
         debug=True,
     ):
         self.mainboard = mainboard
+        self.beatCalculator = beatCalculator
         self.input_device_index = input_device_index
         self.sample_rate = sample_rate
         self.block_size = block_size
@@ -222,6 +224,7 @@ class KickDetector:
                     self._last_trigger_ts = now
                     try:
                         self.mainboard.activate_kick()
+                        self.beatCalculator.put_kick_timestamp()  # Met à jour avec le timestamp du kick
                         if self.debug:
                             trigger_type = []
                             if energy_trigger: trigger_type.append("ENERGY")
