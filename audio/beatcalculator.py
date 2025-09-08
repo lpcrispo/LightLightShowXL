@@ -19,15 +19,21 @@ class BeatCalculator(threading.Thread):
         self.librosa_update_interval = 5  # Analyse librosa toutes les 5 secondes
         self.last_librosa_update = time.time()
         
-        self.current_bpm = 0
-        
         self.kick_timestamps = []
-        self.beat_per_minute = 0
-        self.beat_history = deque(maxlen=10)
+        self.beat_per_minute_finale = 0
+        self.beat_from_librosa = 0
+        self.beat_from_kick = 0
+        
+        self.kick_beat_history = deque(maxlen=5)
+        self.librosa_beat_history = deque(maxlen=5)
         self._running = False
         self.last_update_time = time.time()
         self.update_interval = 3  # secondes
         self.keep_last_kick_time = 10  # secondes
+        
+        # Ajouter un historique des BPM finaux pour éviter les changements brusques
+        self.final_bpm_history = deque(maxlen=3)
+        self.stability_threshold = 0.3  # Seuil de stabilité minimum
         
     def run(self):
         """Méthode principale du thread"""
@@ -45,6 +51,7 @@ class BeatCalculator(threading.Thread):
             if current_time - self.last_update_time > self.update_interval:
                 self.last_update_time = current_time
                 self.put_kick_timestamp_if_no_kick()
+                self.get_beat_per_minute_from_kicks(self.kick_timestamps)
                 self.send_beat_to_mainboard()
             
             # Analyse BPM avec librosa (moins fréquente car plus coûteuse)
@@ -65,9 +72,76 @@ class BeatCalculator(threading.Thread):
         self._running = False
         
     def send_beat_to_mainboard(self):
-            self.beat_per_minute = self.get_beat_per_minute_from_kicks(self.kick_timestamps)
-            print(f"Detected BPM: {self.beat_per_minute}")
-            #self.mainboard.update_sequence_duration_and_fade_from_bpm(self.beat_per_minute)
+        """Choisit le BPM le plus stable entre kick et librosa"""
+        
+        # Calculer la stabilité de chaque méthode
+        kick_stability = self._calculate_stability(self.kick_beat_history)
+        librosa_stability = self._calculate_stability(self.librosa_beat_history)
+        
+        # Calculer la confiance basée sur la quantité de données
+        kick_confidence = min(len(self.kick_beat_history) / 5.0, 1.0)  # Max confiance à 5 échantillons
+        librosa_confidence = min(len(self.librosa_beat_history) / 3.0, 1.0)  # Max confiance à 3 échantillons
+        
+        # Score combiné (stabilité * confiance)
+        kick_score = kick_stability * kick_confidence if self.beat_from_kick > 0 else 0
+        librosa_score = librosa_stability * librosa_confidence if self.beat_from_librosa > 0 else 0
+        
+        print(f"Kick: BPM={self.beat_from_kick}, stability={kick_stability:.2f}, confidence={kick_confidence:.2f}, score={kick_score:.2f}")
+        print(f"Librosa: BPM={self.beat_from_librosa}, stability={librosa_stability:.2f}, confidence={librosa_confidence:.2f}, score={librosa_score:.2f}")
+        
+        # Choisir la meilleure méthode
+        if kick_score > librosa_score and kick_score > 0.3:  # Seuil minimum de confiance
+            self.beat_per_minute_finale = self.beat_from_kick
+            source = "kick"
+        elif librosa_score > 0.3:
+            self.beat_per_minute_finale = self.beat_from_librosa
+            source = "librosa"
+        elif self.beat_from_kick > 0:
+            self.beat_per_minute_finale = self.beat_from_kick
+            source = "kick (fallback)"
+        elif self.beat_from_librosa > 0:
+            self.beat_per_minute_finale = self.beat_from_librosa
+            source = "librosa (fallback)"
+        else:
+            # Garder la dernière valeur connue ou 0
+            source = "previous"
+        
+        print(f"Selected BPM: {self.beat_per_minute_finale} from {source}")
+        
+        # Dans send_beat_to_mainboard(), à la fin :
+        # Lisser avec l'historique des BPM finaux
+        if len(self.final_bpm_history) > 0:
+            previous_bpm = self.final_bpm_history[-1]
+            if previous_bpm > 0 and self.beat_per_minute_finale > 0:
+                # Si le changement est trop brusque (>20%), utiliser une transition progressive
+                change_ratio = abs(self.beat_per_minute_finale - previous_bpm) / previous_bpm
+                if change_ratio > 0.2:
+                    self.beat_per_minute_finale = int(0.2 * previous_bpm + 0.8 * self.beat_per_minute_finale)
+                    print(f"Smoothed BPM transition: {previous_bpm} -> {self.beat_per_minute_finale}")
+
+        self.final_bpm_history.append(self.beat_per_minute_finale)
+        
+    def _calculate_stability(self, history):
+        """Calcule un score de stabilité (0-1) basé sur la variance des valeurs"""
+        if len(history) < 2:
+            return 0.0
+        
+        # Convertir en numpy array
+        values = np.array(history)
+        
+        # Calculer la variance relative (coefficient de variation inversé)
+        mean_val = np.mean(values)
+        if mean_val == 0:
+            return 0.0
+        
+        std_val = np.std(values)
+        cv = std_val / mean_val  # Coefficient de variation
+        
+        # Convertir en score de stabilité (plus la variance est faible, plus c'est stable)
+        # Utiliser une fonction exponentielle décroissante pour le score
+        stability_score = np.exp(-cv * 5)  # Le facteur 5 peut être ajusté
+        
+        return min(stability_score, 1.0)
 
     def put_kick_timestamp(self):
         #ajoute le timestamp actuel à la liste des kicks
@@ -108,16 +182,17 @@ class BeatCalculator(threading.Thread):
 
         bpm = 60 / median_interval
         
-        self.beat_history.append(int(np.clip(bpm, 30, 250)))
-        if len(self.beat_history) == 0:
-            return 0
-        if len(self.beat_history) < 3:
-            return int(np.mean(self.beat_history))
-        
-        print(f"combien d'historique: {len(self.beat_history)}, bpm calculé: {int(bpm)} recalculé(moy): {int(np.mean(self.beat_history))} recalculé(med): {int(np.median(self.beat_history))}")
+        self.kick_beat_history.append(int(np.clip(bpm, 30, 300)))
+        if len(self.kick_beat_history) == 0:
+            return_bpm = 0
+        if len(self.kick_beat_history) < 3:
+            return_bpm = int(np.mean(self.kick_beat_history))
+
+        print(f"combien d'historique: {len(self.kick_beat_history)}, bpm calculé: {int(bpm)} recalculé(moy): {int(np.mean(self.kick_beat_history))} recalculé(med): {int(np.median(self.kick_beat_history))}")
         # Sinon, utiliser la médiane pour plus de robustesse
-        self.current_bpm = int(np.median(self.beat_history))
-        return self.current_bpm
+        return_bpm = int(np.median(self.kick_beat_history))
+        self.beat_from_kick = return_bpm
+
 
     def start_audio_recording(self):
         """Démarre l'enregistrement audio en arrière-plan"""
@@ -159,7 +234,7 @@ class BeatCalculator(threading.Thread):
                 y=concatenated_audio,
                 sr=self.sample_rate,
                 hop_length=512,
-                start_bpm=self.current_bpm if self.current_bpm > 0 else 120,
+                start_bpm=self.beat_per_minute_finale if self.beat_per_minute_finale > 0 else 120,
                 tightness=100     # Contrainte sur la régularité du tempo
             )
             
@@ -170,7 +245,6 @@ class BeatCalculator(threading.Thread):
             # Filtrer les beats pour ne garder que ceux de la première section (originale)
             # beats est en secondes, donc on garde ceux < original_duration
             valid_beats = beats_in_seconds[beats_in_seconds < original_duration]
-            print(f"Valid beat times: {valid_beats}")
             
             # Recalculer le BPM basé uniquement sur les beats de la section originale
             if len(valid_beats) > 1:
@@ -180,9 +254,6 @@ class BeatCalculator(threading.Thread):
                     # Utiliser la médiane des intervalles pour plus de robustesse
                     median_beat_interval = np.median(beat_intervals)
                     recalculated_bpm = 60 / median_beat_interval
-                    
-                    print(f"Librosa BPM: {int(tempo)} (global)")
-                    print(f"Recalculated BPM from valid beats: {int(recalculated_bpm)}")
                     
                     # Utiliser le BPM recalculé plutôt que le global
                     librosa_bpm = int(recalculated_bpm)
@@ -194,21 +265,15 @@ class BeatCalculator(threading.Thread):
             
             # Ajouter à l'historique si valide
             if 30 <= librosa_bpm <= 300:
-                self.beat_history.append(librosa_bpm)
+                self.librosa_beat_history.append(librosa_bpm)
                 
                 # Recalculer le BPM final avec l'historique
-                old_bpm = self.current_bpm
-                if len(self.beat_history) < 3:
-                    self.current_bpm = int(np.mean(self.beat_history))
+                old_bpm = self.beat_from_librosa
+                if len(self.librosa_beat_history) < 3:
+                    self.beat_from_librosa = int(np.mean(self.librosa_beat_history))
                 else:
-                    self.current_bpm = int(np.median(self.beat_history))
+                    self.beat_from_librosa = int(np.median(self.librosa_beat_history))
                 
-                print(f"🎵 Librosa BPM added to history: {librosa_bpm}")
-                print(f"History: {list(self.beat_history)} → Final BPM: {self.current_bpm}")
-                
-                if abs(self.current_bpm - old_bpm) > 3:
-                    print(f"🎵 BPM Updated by librosa: {old_bpm} → {self.current_bpm}")
-                    #self.mainboard.update_sequence_duration_and_fade_from_bpm(self.current_bpm)
             else:
                 print(f"Librosa BPM {librosa_bpm} out of range (30-300), ignoring")
 
