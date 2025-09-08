@@ -30,7 +30,7 @@ def app_logic(input_device_index, output_device_index):
         kd = KickDetector(
             mainboard=mainboard,
             input_device_index=input_device_index,
-            trigger_factor=1.0,      # Plus sensible
+            trigger_factor=0.9,      # Réduit de 1.2 à 1 (plus sensible)
             onset_threshold=0.15,    # Plus sensible
             smoothing_alpha=0.4,     # Plus réactif
             use_onset_detection=True # Active la détection d'onset
