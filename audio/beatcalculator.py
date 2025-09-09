@@ -14,9 +14,9 @@ class BeatCalculator(threading.Thread):
          # Paramètres pour l'enregistrement audio
         self.input_device_index = input_device_index
         self.sample_rate = 22050  # Réduit pour librosa (plus rapide)
-        self.record_duration = 4  # secondes d'enregistrement
+        self.record_duration = 5  # secondes d'enregistrement
         self.audio_buffer = deque(maxlen=int(self.sample_rate * self.record_duration))
-        self.librosa_update_interval = 5  # Analyse librosa toutes les 5 secondes
+        self.librosa_update_interval = 2  # Analyse librosa toutes les 4 secondes
         self.last_librosa_update = time.time()
         
         self.kick_timestamps = []
@@ -24,8 +24,8 @@ class BeatCalculator(threading.Thread):
         self.beat_from_librosa = 0
         self.beat_from_kick = 0
         
-        self.kick_beat_history = deque(maxlen=5)
-        self.librosa_beat_history = deque(maxlen=5)
+        self.kick_beat_history = deque(maxlen=4)
+        self.librosa_beat_history = deque(maxlen=3)
         self._running = False
         self.last_update_time = time.time()
         self.update_interval = 3  # secondes
@@ -86,8 +86,8 @@ class BeatCalculator(threading.Thread):
         kick_score = kick_stability * kick_confidence if self.beat_from_kick > 0 else 0
         librosa_score = librosa_stability * librosa_confidence if self.beat_from_librosa > 0 else 0
         
-        print(f"Kick: BPM={self.beat_from_kick}, stability={kick_stability:.2f}, confidence={kick_confidence:.2f}, score={kick_score:.2f}")
-        print(f"Librosa: BPM={self.beat_from_librosa}, stability={librosa_stability:.2f}, confidence={librosa_confidence:.2f}, score={librosa_score:.2f}")
+        #print(f"Kick: BPM={self.beat_from_kick}, stability={kick_stability:.2f}, confidence={kick_confidence:.2f}, score={kick_score:.2f}")
+        #print(f"Librosa: BPM={self.beat_from_librosa}, stability={librosa_stability:.2f}, confidence={librosa_confidence:.2f}, score={librosa_score:.2f}")
         
         # Choisir la meilleure méthode
         if kick_score > librosa_score and kick_score > 0.3:  # Seuil minimum de confiance
@@ -113,13 +113,14 @@ class BeatCalculator(threading.Thread):
         if len(self.final_bpm_history) > 0:
             previous_bpm = self.final_bpm_history[-1]
             if previous_bpm > 0 and self.beat_per_minute_finale > 0:
-                # Si le changement est trop brusque (>20%), utiliser une transition progressive
+                # Si le changement est trop brusque (>5%), utiliser une transition progressive
                 change_ratio = abs(self.beat_per_minute_finale - previous_bpm) / previous_bpm
-                if change_ratio > 0.2:
+                if change_ratio > 0.05:
                     self.beat_per_minute_finale = int(0.2 * previous_bpm + 0.8 * self.beat_per_minute_finale)
                     print(f"Smoothed BPM transition: {previous_bpm} -> {self.beat_per_minute_finale}")
 
         self.final_bpm_history.append(self.beat_per_minute_finale)
+        self.mainboard.update_sequence_duration_and_fade_from_bpm(self.beat_per_minute_finale)
         
     def _calculate_stability(self, history):
         """Calcule un score de stabilité (0-1) basé sur la variance des valeurs"""
@@ -188,7 +189,7 @@ class BeatCalculator(threading.Thread):
         if len(self.kick_beat_history) < 3:
             return_bpm = int(np.mean(self.kick_beat_history))
 
-        print(f"combien d'historique: {len(self.kick_beat_history)}, bpm calculé: {int(bpm)} recalculé(moy): {int(np.mean(self.kick_beat_history))} recalculé(med): {int(np.median(self.kick_beat_history))}")
+        #print(f"combien d'historique: {len(self.kick_beat_history)}, bpm calculé: {int(bpm)} recalculé(moy): {int(np.mean(self.kick_beat_history))} recalculé(med): {int(np.median(self.kick_beat_history))}")
         # Sinon, utiliser la médiane pour plus de robustesse
         return_bpm = int(np.median(self.kick_beat_history))
         self.beat_from_kick = return_bpm
@@ -229,6 +230,7 @@ class BeatCalculator(threading.Thread):
             
             concatenated_audio = np.concatenate([audio_array, audio_array, audio_array])
             
+            librosaTime = time.time()
             # Détecter le tempo avec librosa
             tempo, beats = librosa.beat.beat_track(
                 y=concatenated_audio,
@@ -237,6 +239,7 @@ class BeatCalculator(threading.Thread):
                 start_bpm=self.beat_per_minute_finale if self.beat_per_minute_finale > 0 else 120,
                 tightness=100     # Contrainte sur la régularité du tempo
             )
+            print(f"Librosa analysis took {time.time() - librosaTime:.2f}s, detected tempo: {tempo}, beats count: {len(beats)}")
             
             # Convertir les beats de frames en secondes
             beats_in_seconds = librosa.frames_to_time(beats, sr=self.sample_rate, hop_length=512)
