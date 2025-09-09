@@ -10,6 +10,7 @@ class MainBoard:
         self.available_themes = {} #initialisation du dictionnaire de thèmes vide
         self.sequence_colors = {} #initialisation de la séquence de couleurs vide
         self.current_theme = p_theme #thème par défaut
+        self.transition_beats = 5
         
         #load definitions from JSON files
         with open('fixtures/fixtures.json', 'r') as f:
@@ -132,27 +133,46 @@ class MainBoard:
             
             print(f"Beat sync: {beats_elapsed:.2f} beats elapsed, next beat in {time_to_next_beat:.2f}s")
             
+            # Nombre de beats pour la transition graduelle
+            self.transition_beats = 3  # Glisser sur 3 beats
+            
             # Synchroniser toutes les fixtures sur le prochain beat
-            for fixture in self.board:
-                color_duration = fixture["sequence_color_duration"]
-                elapsed = current_time - fixture["sequence_color_start_time"]
+        for fixture in self.board:
+            color_duration = fixture["sequence_color_duration"]
+            elapsed = current_time - fixture["sequence_color_start_time"]
+            
+            # Calculer quand cette couleur va se terminer naturellement
+            natural_end_time = fixture["sequence_color_start_time"] + color_duration
+            
+            # Calculer l'écart avec le prochain beat idéal
+            time_diff = natural_end_time - next_beat_time
+            
+            if elapsed < color_duration:
+                # Ajustement graduel sur plusieurs beats
+                # Réduire l'écart d'un tiers à chaque cycle
+                adjustment_factor = 1.0 / self.transition_beats
+                time_adjustment = time_diff * adjustment_factor
                 
-                if elapsed < color_duration:
-                    # Ajuster pour que la couleur se termine exactement sur le prochain beat
-                    new_start_time = next_beat_time - color_duration
-                    fixture["sequence_color_start_time"] = new_start_time
-                    
-                    progress_percent = elapsed / color_duration
-                    print(f"Beat sync {fixture['name']}: progress {progress_percent:.1%}, synced to next beat")
-                else:
-                    # Si la couleur est déjà finie, programmer le changement sur le prochain beat
-                    fixture["sequence_color_start_time"] = next_beat_time
-                    fixture["sequence_current_color"] = fixture["sequence_next_color"]
-                    fixture["sequence_next_color"] = self.get_next_color_in_theme_by_type(
-                        self.current_theme, "sequence", fixture["sequence_next_color"]
-                    )
-                    self.update_new_color_sequence(fixture, fixture["sequence_current_color"], next_beat_time)
-                    print(f"Beat sync {fixture['name']}: scheduled color change on next beat")
+                # Appliquer l'ajustement en modifiant le start_time
+                new_start_time = fixture["sequence_color_start_time"] - time_adjustment
+                fixture["sequence_color_start_time"] = new_start_time
+                
+                progress_percent = elapsed / color_duration
+                print(f"Beat sync {fixture['name']}: progress {progress_percent:.1%}, gradual sync (adj: {time_adjustment:.2f}s)")
+            else:
+                # Si la couleur est déjà finie, programmer le changement sur le prochain beat
+                # mais avec un léger ajustement graduel
+                adjustment_factor = 1.0 / self.transition_beats
+                time_adjustment = time_diff * adjustment_factor
+                
+                adjusted_start_time = next_beat_time - time_adjustment
+                fixture["sequence_color_start_time"] = adjusted_start_time
+                fixture["sequence_current_color"] = fixture["sequence_next_color"]
+                fixture["sequence_next_color"] = self.get_next_color_in_theme_by_type(
+                    self.current_theme, "sequence", fixture["sequence_next_color"]
+                )
+                self.update_new_color_sequence(fixture, fixture["sequence_current_color"], adjusted_start_time)
+                print(f"Beat sync {fixture['name']}: scheduled color change with gradual sync (adj: {time_adjustment:.2f}s)")
         
 
     def update_board(self):
