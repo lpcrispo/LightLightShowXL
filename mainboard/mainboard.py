@@ -1,8 +1,9 @@
 import json
 from time import time
+import random
 
 class MainBoard:
-    def __init__(self, p_theme="startup"):
+    def __init__(self, p_theme="startup", p_style="random"):
         self.board = [] #création du tableau vide
         self.last_update_time = time()  # Initialisation du temps de la dernière mise à jour
         self.available_fixtures = {} #initialisation du dictionnaire de fixtures vide
@@ -51,12 +52,113 @@ class MainBoard:
                               })
         for fixture in self.board:
             print(f"Loaded fixture: {fixture['name']} at DMX addr dim:{fixture['dimmer']['id']}, red:{fixture['sequence_red']['id']}, green:{fixture['sequence_green']['id']}, blue:{fixture['sequence_blue']['id']}")
+        self.change_theme(p_theme) #applique le thème initial
 
     def get_channel(self, p_fixture_name, p_channel_name):
         channels = self.available_fixtures[p_fixture_name]["channels"]
         if p_channel_name not in channels:
             return "NA"
         return channels[p_channel_name]["id"] + self.available_fixtures[p_fixture_name]["dmx_address"] - 1
+
+    def assign_starting_color_to_fixtures(self, p_style="random", p_theme="default"):
+        # assigne une couleur de départ selon le style (random, same, alternate, gradient left-right, gradient right-left, sides to center, center to sides)
+        if p_theme not in self.available_themes:
+            print(f"Theme {p_theme} not found. No changes made.")
+            return
+        if p_style not in ["random", "same", "alternate", "gradient left-right", "gradient right-left", "sides to center", "center to sides"]:
+            print(f"Style {p_style} not recognized. No changes made.")
+            return
+        if p_style == "random":
+            p_style = random.choice(["same", "alternate", "gradient left-right", "gradient right-left", "sides to center", "center to sides"])
+            print(f"Randomly selected style: {p_style}")
+            
+        self.sequence_colors = self.available_themes[p_theme]["sequence"]
+        self.kick_colors = self.available_themes[p_theme]["kick"]
+        
+        num_colors = len(self.sequence_colors)
+        num_fixtures = len(self.board)
+        
+        
+        if num_colors == 0 or num_fixtures == 0:
+            print("No colors or fixtures available. No changes made.")
+            return
+        if p_style == "same": #toutes les fixtures ont la même couleur de départ
+            starting_color = self.sequence_colors[0]
+            for fixture in self.board:
+                fixture["sequence_current_color"] = starting_color
+                fixture["sequence_next_color"] = self.sequence_colors[1] if num_colors > 1 else self.sequence_colors[0]
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
+        elif p_style == "alternate": #les fixtures alternent les couleurs de départ
+            for i, fixture in enumerate(self.board):
+                starting_color = self.sequence_colors[i % num_colors]
+                fixture["sequence_current_color"] = starting_color
+                fixture["sequence_next_color"] = self.sequence_colors[(i + 1) % num_colors]
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
+        elif p_style == "gradient left-right": #gradient de gauche à droite
+            for i, fixture in enumerate(self.board):
+                color_index = int((i / (num_fixtures - 1)) * (num_colors - 1)) if num_fixtures > 1 else 0
+                starting_color = self.sequence_colors[color_index]
+                fixture["sequence_current_color"] = starting_color
+                fixture["sequence_next_color"] = self.sequence_colors[(color_index + 1) % num_colors]
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
+        elif p_style == "gradient right-left": #gradient de droite à gauche
+            for i, fixture in enumerate(self.board):
+                color_index = int(((num_fixtures - 1 - i) / (num_fixtures - 1)) * (num_colors - 1)) if num_fixtures > 1 else 0
+                starting_color = self.sequence_colors[color_index]
+                fixture["sequence_current_color"] = starting_color
+                fixture["sequence_next_color"] = self.sequence_colors[(color_index + 1) % num_colors]
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
+        elif p_style == "sides to center": #gradient des côtés vers le centre
+            center_index = (num_fixtures - 1) / 2
+            for i, fixture in enumerate(self.board):
+                distance_to_center = abs(i - center_index)
+                max_distance = center_index if center_index != 0 else 1
+                color_index = int(((max_distance - distance_to_center) / max_distance) * (num_colors - 1))
+                starting_color = self.sequence_colors[color_index]
+                fixture["sequence_current_color"] = starting_color
+                fixture["sequence_next_color"] = self.sequence_colors[(color_index + 1) % num_colors]
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
+        elif p_style == "center to sides": #gradient du centre vers les côtés
+            center_index = (num_fixtures - 1) / 2
+            for i, fixture in enumerate(self.board):
+                distance_to_center = abs(i - center_index)
+                max_distance = center_index if center_index != 0 else 1
+                color_index = int((distance_to_center / max_distance) * (num_colors - 1))
+                starting_color = self.sequence_colors[color_index]
+                fixture["sequence_current_color"] = starting_color
+                fixture["sequence_next_color"] = self.sequence_colors[(color_index + 1) % num_colors]
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
+        
+        #kick sera tjrs la première couleur du thème
+        for fixture in self.board:
+            fixture["kick_current_color"] = self.kick_colors[0]
+            fixture["kick_red"]["value"] = self.get_color_r(fixture["kick_current_color"])
+            fixture["kick_green"]["value"] = self.get_color_g(fixture["kick_current_color"])
+            fixture["kick_blue"]["value"] = self.get_color_b(fixture["kick_current_color"])
+
+
+    def change_theme(self, p_theme="random"):
+        if p_theme == "random":
+            p_theme = random.choice(list(self.available_themes.keys()))
+        if p_theme not in self.available_themes:
+            print(f"Theme {p_theme} not found. Keeping current theme {self.current_theme}.")
+            return
+        self.current_theme = p_theme
+        self.assign_starting_color_to_fixtures(p_style="same", p_theme=p_theme)
+        print(f"Changing to theme: {self.current_theme} with sequence colors: {self.sequence_colors} and kick colors: {self.kick_colors}")
+
     
     def get_color_r(self, p_color_name):
         return self.available_colors[p_color_name]["red"] 

@@ -15,7 +15,7 @@
                 "flashefx": {"id":7,"default": 0, "min": 0, "max": 255},
                 "colorchange": {"id":8,"default": 0, "min": 0, "max": 255}
             },
-            "kick_respond": false
+            "kick_respond": true
         },
         "LED Par 64 2": {
             "name": "LED Par 64 2",
@@ -29,13 +29,97 @@
                 "blue": {"id":3,"default": 0, "min": 0, "max": 255},
                 "white": {"id":4,"default": 0, "min": 0, "max": 255}
             },
-            "kick_respond": true
+            "kick_respond": false
+        },
+        "LED Par 64 3": {
+            "name": "LED Par 64 3",
+            "type": "par",
+            "manufacturer": "Generic",
+            "dmx_address": 13,
+            "channel_count": 4,
+            "channels": {
+                "red": {"id":1,"default": 0, "min": 0, "max": 255},
+                "green": {"id":2,"default": 0, "min": 0, "max": 255},
+                "blue": {"id":3,"default": 0, "min": 0, "max": 255},
+                "white": {"id":4,"default": 0, "min": 0, "max": 255}
+            },
+            "kick_respond": false
+        },
+        "LED Par 64 4": {
+            "name": "LED Par 64 4",
+            "type": "par",
+            "manufacturer": "Generic",
+            "dmx_address": 17,
+            "channel_count": 4,
+            "channels": {
+                "red": {"id":1,"default": 0, "min": 0, "max": 255},
+                "green": {"id":2,"default": 0, "min": 0, "max": 255},
+                "blue": {"id":3,"default": 0, "min": 0, "max": 255},
+                "white": {"id":4,"default": 0, "min": 0, "max": 255}
+            },
+            "kick_respond": false
+        },
+        "LED Par 64 5": {
+            "name": "LED Par 64 5",
+            "type": "par",
+            "manufacturer": "Generic",
+            "dmx_address": 21,
+            "channel_count": 4,
+            "channels": {
+                "red": {"id":1,"default": 0, "min": 0, "max": 255},
+                "green": {"id":2,"default": 0, "min": 0, "max": 255},
+                "blue": {"id":3,"default": 0, "min": 0, "max": 255},
+                "white": {"id":4,"default": 0, "min": 0, "max": 255}
+            },
+            "kick_respond": false
+        },
+        "LED Par 64 6": {
+            "name": "LED Par 64 6",
+            "type": "par",
+            "manufacturer": "Generic",
+            "dmx_address": 25,
+            "channel_count": 4,
+            "channels": {
+                "red": {"id":1,"default": 0, "min": 0, "max": 255},
+                "green": {"id":2,"default": 0, "min": 0, "max": 255},
+                "blue": {"id":3,"default": 0, "min": 0, "max": 255},
+                "white": {"id":4,"default": 0, "min": 0, "max": 255}
+            },
+            "kick_respond": false
+        },
+        "LED Par 64 7": {
+            "name": "LED Par 64 7",
+            "type": "par",
+            "manufacturer": "Generic",
+            "dmx_address": 29,
+            "channel_count": 4,
+            "channels": {
+                "red": {"id":1,"default": 0, "min": 0, "max": 255},
+                "green": {"id":2,"default": 0, "min": 0, "max": 255},
+                "blue": {"id":3,"default": 0, "min": 0, "max": 255},
+                "white": {"id":4,"default": 0, "min": 0, "max": 255}
+            },
+            "kick_respond": false
+        },
+        "LED Par 64 8": {
+            "name": "LED Par 64 8",
+            "type": "par",
+            "manufacturer": "Generic",
+            "dmx_address": 33,
+            "channel_count": 4,
+            "channels": {
+                "red": {"id":1,"default": 0, "min": 0, "max": 255},
+                "green": {"id":2,"default": 0, "min": 0, "max": 255},
+                "blue": {"id":3,"default": 0, "min": 0, "max": 255},
+                "white": {"id":4,"default": 0, "min": 0, "max": 255}
+            },
+            "kick_respond": false
         },
         "Moving Head Spot 1": {
             "name": "Moving Head Spot 1",
             "type": "moving_head",
             "manufacturer": "Generic",
-            "dmx_address": 13,
+            "dmx_address": 37,
             "channel_count": 16,
             "channels": {
                 "pan_coarse": {"id":1,"default": 0, "min": 0, "max": 255},
@@ -55,6 +139,6 @@
                 "focus": {"id":15,"default": 0, "min": 0, "max": 255},
                 "reset": {"id":16,"default": 0, "min": 0, "max": 255}
             },
-            "kick_respond": false
+            "kick_respond": true
         }
 }

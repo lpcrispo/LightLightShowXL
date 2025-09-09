@@ -14,5 +14,10 @@
     "sunset": {
         "sequence": ["orange", "red", "pink", "purple", "yellow"],
         "kick": ["blue"]
+    },
+    "default": {
+        "sequence": ["red", "green", "blue", "yellow", "purple", "orange", "pink", "white", "black"],
+        "kick": ["white"]
     }
+    
 }
