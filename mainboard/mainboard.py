@@ -5,7 +5,6 @@ class MainBoard:
     def __init__(self, p_theme="startup"):
         self.board = [] #création du tableau vide
         self.last_update_time = time()  # Initialisation du temps de la dernière mise à jour
-
         self.available_fixtures = {} #initialisation du dictionnaire de fixtures vide
         self.available_colors = {} #initialisation du dictionnaire de couleurs vide
         self.available_themes = {} #initialisation du dictionnaire de thèmes vide
@@ -107,7 +106,7 @@ class MainBoard:
 
     # Met à jour la durée des séquences et des fondus en fonction du BPM
     # la duration dure 2 beats, le fade 1 beat  
-    def update_sequence_duration_and_fade_from_bpm(self, p_bpm):
+    def update_sequence_duration_and_fade_from_bpm(self, p_bpm, p_last_beat_timestamp=None):
         print(f"Updating sequence durations from BPM: {p_bpm}")
         if p_bpm <= 0:
             return
@@ -115,6 +114,46 @@ class MainBoard:
         for fixture in self.board:
             fixture["sequence_color_duration"] = beat_duration
             fixture["sequence_fade_duration"] = beat_duration / 2
+        self.sync_sequence_to_beat_start(p_bpm, p_last_beat_timestamp) # Optionnel: synchroniser immédiatement les séquences au début du beat
+
+    def sync_sequence_to_beat_start(self, p_bpm, p_last_beat_timestamp=None):
+        current_time = time()
+        # Si on a un timestamp de beat, calculer le prochain beat prédit
+        if p_last_beat_timestamp and p_bpm > 0:
+            beat_interval = 60.0 / p_bpm
+
+            # Calculer combien de beats se sont écoulés depuis le dernier beat détecté
+            time_since_last_beat = current_time - p_last_beat_timestamp
+            beats_elapsed = time_since_last_beat / beat_interval
+            
+            # Calculer le temps jusqu'au prochain beat
+            time_to_next_beat = beat_interval - (time_since_last_beat % beat_interval)
+            next_beat_time = current_time + time_to_next_beat
+            
+            print(f"Beat sync: {beats_elapsed:.2f} beats elapsed, next beat in {time_to_next_beat:.2f}s")
+            
+            # Synchroniser toutes les fixtures sur le prochain beat
+            for fixture in self.board:
+                color_duration = fixture["sequence_color_duration"]
+                elapsed = current_time - fixture["sequence_color_start_time"]
+                
+                if elapsed < color_duration:
+                    # Ajuster pour que la couleur se termine exactement sur le prochain beat
+                    new_start_time = next_beat_time - color_duration
+                    fixture["sequence_color_start_time"] = new_start_time
+                    
+                    progress_percent = elapsed / color_duration
+                    print(f"Beat sync {fixture['name']}: progress {progress_percent:.1%}, synced to next beat")
+                else:
+                    # Si la couleur est déjà finie, programmer le changement sur le prochain beat
+                    fixture["sequence_color_start_time"] = next_beat_time
+                    fixture["sequence_current_color"] = fixture["sequence_next_color"]
+                    fixture["sequence_next_color"] = self.get_next_color_in_theme_by_type(
+                        self.current_theme, "sequence", fixture["sequence_next_color"]
+                    )
+                    self.update_new_color_sequence(fixture, fixture["sequence_current_color"], next_beat_time)
+                    print(f"Beat sync {fixture['name']}: scheduled color change on next beat")
+        
 
     def update_board(self):
         current_time = time()

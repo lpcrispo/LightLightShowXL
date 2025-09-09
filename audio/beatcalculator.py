@@ -120,7 +120,7 @@ class BeatCalculator(threading.Thread):
                     print(f"Smoothed BPM transition: {previous_bpm} -> {self.beat_per_minute_finale}")
 
         self.final_bpm_history.append(self.beat_per_minute_finale)
-        self.mainboard.update_sequence_duration_and_fade_from_bpm(self.beat_per_minute_finale)
+        self.mainboard.update_sequence_duration_and_fade_from_bpm(self.beat_per_minute_finale, self.last_librosa_beat_timestamp)
         
     def _calculate_stability(self, history):
         """Calcule un score de stabilité (0-1) basé sur la variance des valeurs"""
@@ -239,15 +239,61 @@ class BeatCalculator(threading.Thread):
                 start_bpm=self.beat_per_minute_finale if self.beat_per_minute_finale > 0 else 120,
                 tightness=100     # Contrainte sur la régularité du tempo
             )
-            print(f"Librosa analysis took {time.time() - librosaTime:.2f}s, detected tempo: {tempo}, beats count: {len(beats)}")
             
+            # MAINTENANT on prend le temps de fin d'analyse
+            analysis_end_time = time.time()
+            analysis_duration = analysis_end_time - librosaTime
+            print(f"Librosa analysis took {analysis_duration:.2f}s, detected tempo: {tempo}, beats count: {len(beats)}")
+
             # Convertir les beats de frames en secondes
             beats_in_seconds = librosa.frames_to_time(beats, sr=self.sample_rate, hop_length=512)
             
             original_duration = len(audio_array) / self.sample_rate
-            # Filtrer les beats pour ne garder que ceux de la première section (originale)
-            # beats est en secondes, donc on garde ceux < original_duration
-            valid_beats = beats_in_seconds[beats_in_seconds < original_duration]
+            
+            # Filtrer pour garder tous les beats valides des 3 copies
+            all_valid_beats = []
+            
+            for beat_time in beats_in_seconds:
+                if beat_time < original_duration:
+                    all_valid_beats.append(beat_time)
+                elif beat_time < 2 * original_duration:
+                    equivalent_time = beat_time - original_duration
+                    all_valid_beats.append(equivalent_time)
+                elif beat_time < 3 * original_duration:
+                    equivalent_time = beat_time - 2 * original_duration
+                    all_valid_beats.append(equivalent_time)
+            
+            # Convertir en numpy array et trier
+            valid_beats = np.array(sorted(all_valid_beats))
+            
+            # Supprimer les beats qui sont trop proches (moins de 0.1s d'écart)
+            # pour éviter les triplons dus à la concaténation
+            if len(all_valid_beats) > 1:
+                unique_beats = [all_valid_beats[0]]
+                for beat in all_valid_beats[1:]:
+                    if beat - unique_beats[-1] > 0.1:  # Minimum 0.1s entre beats
+                        unique_beats.append(beat)
+                valid_beats = np.array(unique_beats)
+            else:
+                valid_beats = all_valid_beats
+            
+            print(f"Valid beats after deduplication: {len(valid_beats)} from {len(all_valid_beats)} total")
+            
+            
+            # Calculer les timestamps réels des beats
+            if len(valid_beats) > 0:
+                # Le dernier beat détecté dans l'audio buffer
+                last_beat_offset = valid_beats[-1]  # En secondes depuis le début du buffer
+                
+                # Calculer le timestamp réel du dernier beat
+                # Le buffer a été enregistré avant l'analyse, donc on recule de analysis_duration
+                buffer_start_time = analysis_end_time - analysis_duration - original_duration
+                last_beat_timestamp = buffer_start_time + last_beat_offset
+                
+                print(f"Last beat occurred at timestamp: {last_beat_timestamp}, offset: {last_beat_offset:.2f}s in buffer")
+                
+                #stocker ce timestamp pour utilisation ultérieure
+                self.last_librosa_beat_timestamp = last_beat_timestamp
             
             # Recalculer le BPM basé uniquement sur les beats de la section originale
             if len(valid_beats) > 1:

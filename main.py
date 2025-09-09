@@ -8,7 +8,7 @@ from audio.beatcalculator import BeatCalculator  # Nouveau import
 
 def app_logic(input_device_index, output_device_index):
     print("App running...")
-    mainboard = MainBoard("black and white kick")
+    mainboard = MainBoard("rgby-w")
     artnet = ArtNetSender("192.168.18.28", 0, 6454)
     
     if input_device_index is not None:
