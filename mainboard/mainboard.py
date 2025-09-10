@@ -52,7 +52,8 @@ class MainBoard:
                               })
         for fixture in self.board:
             print(f"Loaded fixture: {fixture['name']} at DMX addr dim:{fixture['dimmer']['id']}, red:{fixture['sequence_red']['id']}, green:{fixture['sequence_green']['id']}, blue:{fixture['sequence_blue']['id']}")
-        self.change_theme(p_theme) #applique le thème initial
+        self.change_theme(p_theme, p_style) #applique le thème initial
+
 
     def get_channel(self, p_fixture_name, p_channel_name):
         channels = self.available_fixtures[p_fixture_name]["channels"]
@@ -149,14 +150,14 @@ class MainBoard:
             fixture["kick_blue"]["value"] = self.get_color_b(fixture["kick_current_color"])
 
 
-    def change_theme(self, p_theme="random"):
+    def change_theme(self, p_theme="random", p_style="random"):
         if p_theme == "random":
             p_theme = random.choice(list(self.available_themes.keys()))
         if p_theme not in self.available_themes:
             print(f"Theme {p_theme} not found. Keeping current theme {self.current_theme}.")
             return
         self.current_theme = p_theme
-        self.assign_starting_color_to_fixtures(p_style="same", p_theme=p_theme)
+        self.assign_starting_color_to_fixtures(p_style=p_style, p_theme=p_theme)
         print(f"Changing to theme: {self.current_theme} with sequence colors: {self.sequence_colors} and kick colors: {self.kick_colors}")
 
     
