@@ -34,7 +34,7 @@ class FixturesView:
     def create_fixture_squares(self):
         """Crée un carré coloré pour chaque fixture"""
         # Calculer le nombre de colonnes (par exemple 4 fixtures par ligne)
-        columns = 4
+        columns = 100
         
         for index, fixture in enumerate(self.mainboard.board):
             row = index // columns
@@ -116,6 +116,14 @@ class FixturesView:
                         
                         # Indicateur de status (rouge pour kick actif)
                         widgets['canvas'].itemconfig(widgets['status_indicator'], fill="red")
+                    elif fixture["repos_activated"]:
+                        # Couleur de repos
+                        r = fixture["repos_red"]["value"]
+                        g = fixture["repos_green"]["value"]
+                        b = fixture["repos_blue"]["value"]
+                        
+                        # Indicateur de status (bleu pour mode repos)
+                        widgets['canvas'].itemconfig(widgets['status_indicator'], fill="blue")
                     else:
                         # Couleur de sequence
                         r = fixture["sequence_red"]["value"]

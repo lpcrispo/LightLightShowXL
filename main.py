@@ -4,7 +4,8 @@ from mainboard.mainboard import MainBoard
 from views.main_view import MainView
 from kickdetector.kickdetector import KickDetector
 from audio.output import AudioPassthrough
-from audio.beatcalculator import BeatCalculator  # Nouveau import
+from audio.beatcalculator import BeatCalculator  
+from audio.energydetector import EnergyDetector
 
 def app_logic(input_device_index, output_device_index):
     print("App running...")
@@ -18,6 +19,14 @@ def app_logic(input_device_index, output_device_index):
         beatCalculator = None
         print("Aucun périphérique input sélectionné. Pas de BeatCalculator.")
 
+    if input_device_index is not None:
+        energyDetector = EnergyDetector(mainboard, input_device_index)
+        energyDetector.start()
+        print("EnergyDetector thread started...")
+    else:
+        energyDetector = None
+        print("Aucun périphérique input sélectionné. Pas d'EnergyDetector.")
+        
     # Audio monitoring (input -> output)
     if input_device_index is not None and output_device_index is not None:
         monitor = AudioPassthrough(

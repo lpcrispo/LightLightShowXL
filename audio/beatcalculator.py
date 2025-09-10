@@ -243,7 +243,7 @@ class BeatCalculator(threading.Thread):
             # MAINTENANT on prend le temps de fin d'analyse
             analysis_end_time = time.time()
             analysis_duration = analysis_end_time - librosaTime
-            print(f"Librosa analysis took {analysis_duration:.2f}s, detected tempo: {tempo}, beats count: {len(beats)}")
+            #print(f"Librosa analysis took {analysis_duration:.2f}s, detected tempo: {tempo}, beats count: {len(beats)}")
 
             # Convertir les beats de frames en secondes
             beats_in_seconds = librosa.frames_to_time(beats, sr=self.sample_rate, hop_length=512)
@@ -277,7 +277,7 @@ class BeatCalculator(threading.Thread):
             else:
                 valid_beats = all_valid_beats
             
-            print(f"Valid beats after deduplication: {len(valid_beats)} from {len(all_valid_beats)} total")
+            #print(f"Valid beats after deduplication: {len(valid_beats)} from {len(all_valid_beats)} total")
             
             
             # Calculer les timestamps réels des beats
@@ -290,7 +290,7 @@ class BeatCalculator(threading.Thread):
                 buffer_start_time = analysis_end_time - analysis_duration - original_duration
                 last_beat_timestamp = buffer_start_time + last_beat_offset
                 
-                print(f"Last beat occurred at timestamp: {last_beat_timestamp}, offset: {last_beat_offset:.2f}s in buffer")
+                #print(f"Last beat occurred at timestamp: {last_beat_timestamp}, offset: {last_beat_offset:.2f}s in buffer")
                 
                 #stocker ce timestamp pour utilisation ultérieure
                 self.last_librosa_beat_timestamp = last_beat_timestamp

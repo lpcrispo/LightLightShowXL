@@ -49,6 +49,10 @@ class MainBoard:
                                 "kick_red": {"id": self.get_channel(fixture_name, "red"), "value": 0},
                                 "kick_green": {"id": self.get_channel(fixture_name, "green"), "value": 0},
                                 "kick_blue": {"id": self.get_channel(fixture_name, "blue"), "value": 0},
+                                "repos_activated": False, #indique si le mode repos est activé
+                                "repos_red": {"id": self.get_channel(fixture_name, "red"), "value": 10},
+                                "repos_green": {"id": self.get_channel(fixture_name, "green"), "value": 10},
+                                "repos_blue": {"id": self.get_channel(fixture_name, "blue"), "value": 10},
                               })
         for fixture in self.board:
             print(f"Loaded fixture: {fixture['name']} at DMX addr dim:{fixture['dimmer']['id']}, red:{fixture['sequence_red']['id']}, green:{fixture['sequence_green']['id']}, blue:{fixture['sequence_blue']['id']}")
@@ -175,10 +179,11 @@ class MainBoard:
         return sequence[next_idx]
     
     def update_new_color_sequence(self, p_fixture, p_new_color, p_current_time):
+        intensity = p_fixture["sequence_intensity"]
         p_fixture["sequence_current_color"] = p_new_color
-        p_fixture["sequence_red"]["value"] = self.get_color_r(p_new_color) 
-        p_fixture["sequence_green"]["value"] = self.get_color_g(p_new_color) 
-        p_fixture["sequence_blue"]["value"] = self.get_color_b(p_new_color)
+        p_fixture["sequence_red"]["value"] = self.get_color_r(p_new_color) * intensity
+        p_fixture["sequence_green"]["value"] = self.get_color_g(p_new_color) * intensity
+        p_fixture["sequence_blue"]["value"] = self.get_color_b(p_new_color) * intensity
         p_fixture["sequence_color_start_time"] = p_current_time
 
     def apply_intensity_modulation(self, p_fixture):
@@ -188,14 +193,15 @@ class MainBoard:
         p_fixture["sequence_blue"]["value"] = int(p_fixture["sequence_blue"]["value"] * intensity)
 
     def update_sequence_color_to_next(self, p_fixture, p_current_color, p_new_color, p_percent):
-        p_fixture["sequence_red"]["value"] = int(self.get_color_r(p_current_color) + (self.get_color_r(p_new_color) - self.get_color_r(p_current_color)) * p_percent)
-        p_fixture["sequence_green"]["value"] = int(self.get_color_g(p_current_color) + (self.get_color_g(p_new_color) - self.get_color_g(p_current_color)) * p_percent)
-        p_fixture["sequence_blue"]["value"] = int(self.get_color_b(p_current_color) + (self.get_color_b(p_new_color) - self.get_color_b(p_current_color)) * p_percent)
+        intensity = p_fixture["sequence_intensity"]
+        p_fixture["sequence_red"]["value"] = int(self.get_color_r(p_current_color) * intensity + (self.get_color_r(p_new_color) * intensity - self.get_color_r(p_current_color) * intensity) * p_percent)
+        p_fixture["sequence_green"]["value"] = int(self.get_color_g(p_current_color) * intensity + (self.get_color_g(p_new_color) * intensity - self.get_color_g(p_current_color) * intensity) * p_percent)
+        p_fixture["sequence_blue"]["value"] = int(self.get_color_b(p_current_color) * intensity + (self.get_color_b(p_new_color) * intensity - self.get_color_b(p_current_color) * intensity) * p_percent)
 
     def update_kick_color_to_next(self, p_fixture, p_current_color, p_seq_r, p_seq_g, p_seq_b, p_percent):
-        p_fixture["kick_red"]["value"] = int(self.get_color_r(p_current_color) + (p_seq_r - self.get_color_r(p_current_color)) * p_percent)
-        p_fixture["kick_green"]["value"] = int(self.get_color_g(p_current_color) + (p_seq_g - self.get_color_g(p_current_color)) * p_percent)
-        p_fixture["kick_blue"]["value"] = int(self.get_color_b(p_current_color) + (p_seq_b - self.get_color_b(p_current_color)) * p_percent)
+        p_fixture["kick_red"]["value"] = int(self.get_color_r(p_current_color)  + (p_seq_r - self.get_color_r(p_current_color)) * p_percent)
+        p_fixture["kick_green"]["value"] = int(self.get_color_g(p_current_color)  + (p_seq_g - self.get_color_g(p_current_color)) * p_percent)
+        p_fixture["kick_blue"]["value"] = int(self.get_color_b(p_current_color)  + (p_seq_b - self.get_color_b(p_current_color)) * p_percent)
 
     def activate_kick(self):
         current_time = time()
@@ -211,7 +217,7 @@ class MainBoard:
     # Met à jour la durée des séquences et des fondus en fonction du BPM
     # la duration dure 2 beats, le fade 1 beat  
     def update_sequence_duration_and_fade_from_bpm(self, p_bpm, p_last_beat_timestamp=None):
-        print(f"Updating sequence durations from BPM: {p_bpm}")
+        #print(f"Updating sequence durations from BPM: {p_bpm}")
         if p_bpm <= 0:
             return
         beat_duration = 60.0 / p_bpm
@@ -234,7 +240,7 @@ class MainBoard:
             time_to_next_beat = beat_interval - (time_since_last_beat % beat_interval)
             next_beat_time = current_time + time_to_next_beat
             
-            print(f"Beat sync: {beats_elapsed:.2f} beats elapsed, next beat in {time_to_next_beat:.2f}s")
+            #print(f"Beat sync: {beats_elapsed:.2f} beats elapsed, next beat in {time_to_next_beat:.2f}s")
             
             # Nombre de beats pour la transition graduelle
             self.transition_beats = 3  # Glisser sur 3 beats
@@ -261,7 +267,7 @@ class MainBoard:
                 fixture["sequence_color_start_time"] = new_start_time
                 
                 progress_percent = elapsed / color_duration
-                print(f"Beat sync {fixture['name']}: progress {progress_percent:.1%}, gradual sync (adj: {time_adjustment:.2f}s)")
+                #print(f"Beat sync {fixture['name']}: progress {progress_percent:.1%}, gradual sync (adj: {time_adjustment:.2f}s)")
             else:
                 # Si la couleur est déjà finie, programmer le changement sur le prochain beat
                 # mais avec un léger ajustement graduel
@@ -275,7 +281,7 @@ class MainBoard:
                     self.current_theme, "sequence", fixture["sequence_next_color"]
                 )
                 self.update_new_color_sequence(fixture, fixture["sequence_current_color"], adjusted_start_time)
-                print(f"Beat sync {fixture['name']}: scheduled color change with gradual sync (adj: {time_adjustment:.2f}s)")
+                #print(f"Beat sync {fixture['name']}: scheduled color change with gradual sync (adj: {time_adjustment:.2f}s)")
         
 
     def update_board(self):
@@ -312,3 +318,51 @@ class MainBoard:
                     self.update_kick_color_to_next(fixture, fixture["kick_current_color"], fixture["sequence_red"]["value"], fixture["sequence_green"]["value"], fixture["sequence_blue"]["value"], kick_elapsed / fixture["kick_duration"])
         self.last_update_time = current_time
         
+        
+    def update_energy_levels(self, bass_level, mid_level, high_level):
+        """Met à jour les données du mainboard selon les niveaux d'énergie détectés"""
+        print(f"MainBoard received energy levels - Bass: {bass_level}, Mid: {mid_level}, High: {high_level}")
+        
+        # Placeholder - Exemples d'utilisation possible :
+        
+        # 1. Ajuster l'intensité globale selon l'énergie totale
+        total_energy_score = 0
+        for level in [bass_level, mid_level, high_level]:
+            if level == 'haute':
+                total_energy_score += 3
+            elif level == 'moyenne':
+                total_energy_score += 2
+            else:  # faible
+                total_energy_score += 1
+        
+        # Ajuster l'intensité des séquences (0.3 à 1.0)
+        intensity = 0.3 + (total_energy_score / 9.0) * 0.7
+          
+        # Appliquer les changements aux fixtures
+        for fixture in self.board:
+            # Ajuster l'intensité
+            fixture["sequence_intensity"] = intensity
+
+        #si tout est faible et que ce n'était pas déja le cas, activer le mode repos
+        if total_energy_score == 3 and (not hasattr(self, 'energy_levels') or self.energy_levels.get('intensity', 1) > 0.3):
+            for fixture in self.board:
+                # Ajuster l'intensité
+                fixture["repos_activated"] = True
+            #on change le theme et le style
+            self.change_theme(p_theme="random", p_style="random")
+        else:
+            for fixture in self.board:
+                # Ajuster l'intensité
+                fixture["repos_activated"] = False
+
+        # Stocker les niveaux actuels pour utilisation ultérieure
+        if not hasattr(self, 'energy_levels'):
+            self.energy_levels = {}
+        
+        self.energy_levels.update({
+            'bass': bass_level,
+            'mid': mid_level,
+            'high': high_level,
+            'timestamp': time(),
+            'intensity': intensity,
+        })

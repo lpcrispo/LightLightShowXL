@@ -1,12 +1,4 @@
 {
-    "startup": {
-        "sequence": ["white", "black"],
-        "kick": ["yellow"]
-    },
-    "black and white kick": {
-        "sequence": ["black"],
-        "kick": ["white"]
-    },
     "rgby-w": {
         "sequence": ["red", "green", "blue", "yellow"],
         "kick": ["white"]
