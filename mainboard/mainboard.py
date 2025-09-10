@@ -92,35 +92,35 @@ class MainBoard:
             for fixture in self.board:
                 fixture["sequence_current_color"] = starting_color
                 fixture["sequence_next_color"] = self.sequence_colors[1] if num_colors > 1 else self.sequence_colors[0]
-                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
-                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
-                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
         elif p_style == "alternate": #les fixtures alternent les couleurs de départ
             for i, fixture in enumerate(self.board):
                 starting_color = self.sequence_colors[i % num_colors]
                 fixture["sequence_current_color"] = starting_color
                 fixture["sequence_next_color"] = self.sequence_colors[(i + 1) % num_colors]
-                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
-                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
-                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
         elif p_style == "gradient left-right": #gradient de gauche à droite
             for i, fixture in enumerate(self.board):
                 color_index = int((i / (num_fixtures - 1)) * (num_colors - 1)) if num_fixtures > 1 else 0
                 starting_color = self.sequence_colors[color_index]
                 fixture["sequence_current_color"] = starting_color
                 fixture["sequence_next_color"] = self.sequence_colors[(color_index + 1) % num_colors]
-                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
-                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
-                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
         elif p_style == "gradient right-left": #gradient de droite à gauche
             for i, fixture in enumerate(self.board):
                 color_index = int(((num_fixtures - 1 - i) / (num_fixtures - 1)) * (num_colors - 1)) if num_fixtures > 1 else 0
                 starting_color = self.sequence_colors[color_index]
                 fixture["sequence_current_color"] = starting_color
                 fixture["sequence_next_color"] = self.sequence_colors[(color_index + 1) % num_colors]
-                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
-                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
-                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
         elif p_style == "sides to center": #gradient des côtés vers le centre
             center_index = (num_fixtures - 1) / 2
             for i, fixture in enumerate(self.board):
@@ -130,9 +130,9 @@ class MainBoard:
                 starting_color = self.sequence_colors[color_index]
                 fixture["sequence_current_color"] = starting_color
                 fixture["sequence_next_color"] = self.sequence_colors[(color_index + 1) % num_colors]
-                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
-                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
-                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
         elif p_style == "center to sides": #gradient du centre vers les côtés
             center_index = (num_fixtures - 1) / 2
             for i, fixture in enumerate(self.board):
@@ -142,10 +142,10 @@ class MainBoard:
                 starting_color = self.sequence_colors[color_index]
                 fixture["sequence_current_color"] = starting_color
                 fixture["sequence_next_color"] = self.sequence_colors[(color_index + 1) % num_colors]
-                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"])
-                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"])
-                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"])
-        
+                fixture["sequence_red"]["value"] = self.get_color_r(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_green"]["value"] = self.get_color_g(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+                fixture["sequence_blue"]["value"] = self.get_color_b(fixture["sequence_current_color"]) * fixture["sequence_intensity"]
+
         #kick sera tjrs la première couleur du thème
         for fixture in self.board:
             fixture["kick_current_color"] = self.kick_colors[0]
@@ -194,9 +194,9 @@ class MainBoard:
 
     def update_sequence_color_to_next(self, p_fixture, p_current_color, p_new_color, p_percent):
         intensity = p_fixture["sequence_intensity"]
-        p_fixture["sequence_red"]["value"] = int(self.get_color_r(p_current_color) * intensity + (self.get_color_r(p_new_color) * intensity - self.get_color_r(p_current_color) * intensity) * p_percent)
-        p_fixture["sequence_green"]["value"] = int(self.get_color_g(p_current_color) * intensity + (self.get_color_g(p_new_color) * intensity - self.get_color_g(p_current_color) * intensity) * p_percent)
-        p_fixture["sequence_blue"]["value"] = int(self.get_color_b(p_current_color) * intensity + (self.get_color_b(p_new_color) * intensity - self.get_color_b(p_current_color) * intensity) * p_percent)
+        p_fixture["sequence_red"]["value"] = int((self.get_color_r(p_current_color) * intensity) + ((self.get_color_r(p_new_color) * intensity) - (self.get_color_r(p_current_color) * intensity) * p_percent))
+        p_fixture["sequence_green"]["value"] = int((self.get_color_g(p_current_color) * intensity) + ((self.get_color_g(p_new_color) * intensity) - (self.get_color_g(p_current_color) * intensity) * p_percent))
+        p_fixture["sequence_blue"]["value"] = int((self.get_color_b(p_current_color) * intensity) + ((self.get_color_b(p_new_color) * intensity) - (self.get_color_b(p_current_color) * intensity) * p_percent))
 
     def update_kick_color_to_next(self, p_fixture, p_current_color, p_seq_r, p_seq_g, p_seq_b, p_percent):
         p_fixture["kick_red"]["value"] = int(self.get_color_r(p_current_color)  + (p_seq_r - self.get_color_r(p_current_color)) * p_percent)
@@ -321,7 +321,7 @@ class MainBoard:
         
     def update_energy_levels(self, bass_level, mid_level, high_level):
         """Met à jour les données du mainboard selon les niveaux d'énergie détectés"""
-        print(f"MainBoard received energy levels - Bass: {bass_level}, Mid: {mid_level}, High: {high_level}")
+        print(f"{bass_level}-{mid_level}-{high_level}")
         
         # Placeholder - Exemples d'utilisation possible :
         
