@@ -328,47 +328,79 @@ class MainBoard:
         self.last_update_time = current_time
         
         
-    def update_energy_levels(self, bass_level, mid_level, high_level):
-        """Met à jour les données du mainboard selon les niveaux d'énergie détectés"""
-        print(f"{bass_level}-{mid_level}-{high_level}")
-      
-        # 1. Ajuster l'intensité globale selon l'énergie totale
-        total_energy_score = 0
-        for level in [bass_level, mid_level, high_level]:
-            if level == 'haute':
-                total_energy_score += 3
-            elif level == 'moyenne':
-                total_energy_score += 2
-            else:  # faible
-                total_energy_score += 1
+    def update_energy_levels_detailed(self, energy_levels):
+        """Met à jour les données du mainboard avec analyse détaillée"""
         
-        # Ajuster l'intensité des séquences (0.3 à 1.0)
-        intensity = 0.3 + (total_energy_score / 9.0) * 0.7
-          
-        # Appliquer les changements aux fixtures
-        for fixture in self.board:
-            # Ajuster l'intensité
-            fixture["sequence_intensity"] = intensity
-
-        #si tout est faible et que ce n'était pas déja le cas, activer le mode repos
-        if total_energy_score == 3:
+        # Convertir les niveaux en scores numériques
+        level_scores = {
+            'très_faible': 1,
+            'faible': 2,
+            'moyenne': 3,
+            'haute': 4,
+            'très_haute': 5
+        }
+        
+        # Calculer le score global pondéré
+        total_score = (
+            level_scores[energy_levels['bass']] * 3 +           # Bass très important
+            level_scores[energy_levels['sub_bass']] * 2 +       # Sub-bass important  
+            level_scores[energy_levels['mid']] * 2 +            # Mid important
+            level_scores[energy_levels['low_mid']] * 1.5 +      # Low-mid modéré
+            level_scores[energy_levels['high']] * 1 +           # High moins important
+            level_scores[energy_levels['presence']] * 0.5       # Presence subtil
+        ) / 10  # Normaliser sur 10
+        
+        # Utiliser l'intensité globale pour détecter refrain/couplet
+        global_intensity_score = level_scores[energy_levels['global_intensity']]
+        
+        print(f"Global intensity: {energy_levels['global_intensity']} (score: {global_intensity_score})")
+        
+        # Ajuster l'intensité (plage plus large pour plus de contraste)
+        if global_intensity_score == 1:  # Très faible
             for fixture in self.board:
                 if fixture["repos_activated"] == False:
                     fixture["repos_activated"] = True
                     self.change_theme(p_theme="random", p_style="random")
         else:
             for fixture in self.board:
-                # Ajuster l'intensité
-                fixture["repos_activated"] = False
-
-        # Stocker les niveaux actuels pour utilisation ultérieure
-        if not hasattr(self, 'energy_levels'):
-            self.energy_levels = {}
+                if fixture["repos_activated"] == True:
+                    fixture["repos_activated"] = False
+        if global_intensity_score == 2:  # Très faible/faible
+            intensity = 0.1 + (total_score / 5.0) * 0.4  # 0.1 à 0.5
+        elif global_intensity_score == 3:  # Moyenne
+            intensity = 0.4 + (total_score / 5.0) * 0.4  # 0.4 à 0.8
+        else:  # Haute/très haute (refrain)
+            intensity = 0.6 + (total_score / 5.0) * 0.4  # 0.6 à 1.0
         
-        self.energy_levels.update({
-            'bass': bass_level,
-            'mid': mid_level,
-            'high': high_level,
-            'timestamp': time(),
+        # Détecter les changements d'ambiance importants
+        previous_global = getattr(self, 'previous_global_intensity', 'moyenne')
+        
+        # Transition couplet -> refrain
+        if (previous_global in ['très_faible', 'faible'] and 
+            energy_levels['global_intensity'] in ['haute', 'très_haute']):
+            print("🎵 REFRAIN DÉTECTÉ - Changement de thème")
+            self.change_theme(p_theme="random", p_style="random")
+            
+        # Transition refrain -> couplet
+        elif (previous_global in ['haute', 'très_haute'] and 
+            energy_levels['global_intensity'] in ['très_faible', 'faible']):
+            print("🎵 COUPLET DÉTECTÉ - Mode calme")
+            #self.change_theme(p_theme="random", p_style="random")
+        
+        # Appliquer aux fixtures
+        for fixture in self.board:
+            fixture["sequence_intensity"] = intensity
+            
+        # Stocker pour la prochaine analyse
+        self.previous_global_intensity = energy_levels['global_intensity']
+        
+        # Stocker les détails pour monitoring
+        if not hasattr(self, 'detailed_energy_levels'):
+            self.detailed_energy_levels = {}
+        
+        self.detailed_energy_levels.update({
+            **energy_levels,
+            'total_score': total_score,
             'intensity': intensity,
+            'timestamp': time()
         })
