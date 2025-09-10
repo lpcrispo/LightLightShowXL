@@ -3,15 +3,22 @@ from time import time
 import random
 
 class MainBoard:
-    def __init__(self, p_theme="startup", p_style="random"):
+    def __init__(self, p_theme="random", p_style="random"):
         self.board = [] #création du tableau vide
         self.last_update_time = time()  # Initialisation du temps de la dernière mise à jour
         self.available_fixtures = {} #initialisation du dictionnaire de fixtures vide
         self.available_colors = {} #initialisation du dictionnaire de couleurs vide
         self.available_themes = {} #initialisation du dictionnaire de thèmes vide
         self.sequence_colors = {} #initialisation de la séquence de couleurs vide
-        self.current_theme = p_theme #thème par défaut
+        
         self.transition_beats = 5
+        self.energy_levels = {
+            'bass': "faible",
+            'mid': "faible",
+            'high': "faible",
+            'timestamp': time(),
+            'intensity': 0,
+        }
         
         #load definitions from JSON files
         with open('fixtures/fixtures.json', 'r') as f:
@@ -24,6 +31,8 @@ class MainBoard:
             self.available_themes = json.load(f)
             print(self.available_themes)
          # Initialiser sequence_colors selon le current_theme
+         
+        self.change_theme(p_theme, p_style) #thème par défaut
         self.sequence_colors = self.available_themes[self.current_theme]["sequence"]
         self.kick_colors = self.available_themes[self.current_theme]["kick"]
 
@@ -188,9 +197,9 @@ class MainBoard:
 
     def apply_intensity_modulation(self, p_fixture):
         intensity = p_fixture["sequence_intensity"]
-        p_fixture["sequence_red"]["value"] = int(p_fixture["sequence_red"]["value"] * intensity)
-        p_fixture["sequence_green"]["value"] = int(p_fixture["sequence_green"]["value"] * intensity)
-        p_fixture["sequence_blue"]["value"] = int(p_fixture["sequence_blue"]["value"] * intensity)
+        p_fixture["sequence_red"]["value"] = int(p_fixture["sequence_red"]["value"]) #* intensity)
+        p_fixture["sequence_green"]["value"] = int(p_fixture["sequence_green"]["value"]) #* intensity)
+        p_fixture["sequence_blue"]["value"] = int(p_fixture["sequence_blue"]["value"]) #* intensity)
 
     def update_sequence_color_to_next(self, p_fixture, p_current_color, p_new_color, p_percent):
         intensity = p_fixture["sequence_intensity"]
@@ -322,9 +331,7 @@ class MainBoard:
     def update_energy_levels(self, bass_level, mid_level, high_level):
         """Met à jour les données du mainboard selon les niveaux d'énergie détectés"""
         print(f"{bass_level}-{mid_level}-{high_level}")
-        
-        # Placeholder - Exemples d'utilisation possible :
-        
+      
         # 1. Ajuster l'intensité globale selon l'énergie totale
         total_energy_score = 0
         for level in [bass_level, mid_level, high_level]:
@@ -344,12 +351,11 @@ class MainBoard:
             fixture["sequence_intensity"] = intensity
 
         #si tout est faible et que ce n'était pas déja le cas, activer le mode repos
-        if total_energy_score == 3 and (not hasattr(self, 'energy_levels') or self.energy_levels.get('intensity', 1) > 0.3):
+        if total_energy_score == 3:
             for fixture in self.board:
-                # Ajuster l'intensité
-                fixture["repos_activated"] = True
-            #on change le theme et le style
-            self.change_theme(p_theme="random", p_style="random")
+                if fixture["repos_activated"] == False:
+                    fixture["repos_activated"] = True
+                    self.change_theme(p_theme="random", p_style="random")
         else:
             for fixture in self.board:
                 # Ajuster l'intensité

@@ -1,15 +1,162 @@
 {
-    "rgby-w": {
-        "sequence": ["red", "green", "blue", "yellow"],
-        "kick": ["white"]
+      "Feu d'artifice": {
+          "sequence": ["red", "yellow", "green", "blue", "white", "magenta", "orange"],
+          "kick": ["white", "yellow"]
     },
-    "sunset": {
-        "sequence": ["orange", "red", "pink", "purple", "yellow"],
-        "kick": ["blue"]
+      "Coucher de Soleil": {
+          "sequence": ["yellow", "orange", "red", "purple"],
+          "kick": ["pink"]
     },
-    "default": {
-        "sequence": ["red", "green", "blue", "yellow", "purple", "orange", "pink", "white", "black"],
-        "kick": ["white"]
+      "Forêt Enchantée": {
+          "sequence": ["darkGreen", "forestGreen", "lime", "green"],
+          "kick": ["lightGreen"]
+    },
+    "Étoiles Filantes": {
+          "sequence": ["white", "lightBlue", "purple"],
+          "kick": ["white"]
+    },
+    "Arc-en-ciel": {
+          "sequence": ["red", "orange", "yellow", "green", "blue", "indigo", "violet"],
+          "kick": ["white"]
+    },
+    "Fête Tropicale": {
+          "sequence": ["magenta", "cyan", "lime", "yellow", "orange"],
+          "kick": ["white"]
+    },
+    "Aurores Boréales": {
+          "sequence": ["purple", "blue", "teal", "green"],
+          "kick": ["white"]
+    },
+    "Magma": {
+          "sequence": ["darkRed", "red", "orange", "yellow"],
+          "kick": ["white"]
+    },
+    "Nébuleuse": {
+          "sequence": ["purple", "indigo", "blue", "black"],
+          "kick": ["white"]
+    },
+    "Bonbon": {
+          "sequence": ["pink", "magenta", "cyan", "yellow"],
+          "kick": ["white"]
+    },
+    "Glacier": {
+          "sequence": ["lightBlue", "cyan", "white"],
+          "kick": ["blue"]
+    },
+    "Océan Profond": {
+          "sequence": ["teal", "blue", "navy"],
+          "kick": ["cyan"]
+    },
+    "Maison Hantée": {
+          "sequence": ["black", "purple", "green"],
+          "kick": ["orange"]
+    },
+    "Disco": {
+          "sequence": ["magenta", "lime", "cyan", "yellow", "orange"],
+          "kick": ["white"]
+    },
+    "Feuillage d'Automne": {
+          "sequence": ["brown", "orange", "yellow", "red"],
+          "kick": ["red"]
+    },
+    "Printemps": {
+          "sequence": ["lightGreen", "pink", "lightYellow"],
+          "kick": ["green"]
+    },
+    "Savane": {
+          "sequence": ["gold", "green", "brown"],
+          "kick": ["black"]
+    },
+    "Pastel": {
+          "sequence": ["lightPink", "lightBlue", "lavender", "mintGreen"],
+          "kick": ["white"]
+    },
+    "Coucher Tropical": {
+          "sequence": ["red", "orange", "pink"],
+          "kick": ["yellow"]
+    },
+    "Étoile du Nord": {
+          "sequence": ["white", "lightBlue", "blue"],
+          "kick": ["white"]
+    },
+    "Princesse": {
+          "sequence": ["pink", "lavender", "white"],
+          "kick": ["yellow"]
+    },
+    "Forêt Nocturne": {
+          "sequence": ["darkGreen", "black", "navy"],
+          "kick": ["purple"]
+    },
+    "Rayon de Soleil": {
+          "sequence": ["yellow", "lightYellow", "white"],
+          "kick": ["orange"]
+    },
+    "Bouquet Floral": {
+          "sequence": ["pink", "yellow", "violet"],
+          "kick": ["white"]
+    },
+    "Galaxie": {
+          "sequence": ["black", "darkBlue", "purple", "cyan"],
+          "kick": ["white"]
+    },
+    "Concert": {
+          "sequence": ["red", "blue", "white"],
+          "kick": ["purple"]
+    },
+    "Noël": {
+          "sequence": ["red", "green", "white"],
+          "kick": ["gold"]
+    },
+    "Halloween": {
+          "sequence": ["orange", "black", "purple"],
+          "kick": ["green"]
+    },
+    "Néon": {
+          "sequence": ["magenta", "lime", "cyan", "yellow"],
+          "kick": ["white"]
+    },
+    "Arc-en-ciel doux": {
+          "sequence": ["lightPink", "lightYellow", "lightGreen", "lightBlue", "lavender"],
+          "kick": ["white"]
+    },
+    "La Mer Bleue": {
+          "sequence": ["blue1", "blue2", "blue3", "blue4", "blue5", "blue6", "blue7", "blue8", "blue9", "blue10"],
+          "kick": ["white"]
+    },
+    "Rêve Rose": {
+          "sequence": ["pink1", "pink2", "pink3", "pink4", "pink5", "pink6", "pink7", "pink8", "pink9", "pink10"],
+          "kick": ["gold"]
+    },
+    "Jungle Verte": {
+          "sequence": ["green1", "green2", "green3", "green4", "green5", "green6", "green7", "green8", "green9", "green10"],
+          "kick": ["white"]
+    },
+    "Soleil Orange": {
+          "sequence": ["orange1", "orange2", "orange3", "orange4", "orange5", "orange6", "orange7", "orange8", "orange9", "orange10"],
+          "kick": ["white"]
+    },
+    "Cascade Jaune": {
+          "sequence": ["yellow1", "yellow2", "yellow3", "yellow4", "yellow5", "yellow6", "yellow7", "yellow8", "yellow9", "yellow10"],
+          "kick": ["white"]
+    },
+    "Crépuscule Violet": {
+          "sequence": ["purple1", "purple2", "purple3", "purple4", "purple5", "purple6", "purple7", "purple8", "purple9", "purple10"],
+          "kick": ["white"]
+    },
+    "Flamme Rouge": {
+          "sequence": ["red1", "red2", "red3", "red4", "red5", "red6", "red7", "red8", "red9", "red10"],
+          "kick": ["white"]
+    },
+    "Lagon Turquoise": {
+          "sequence": ["teal1", "teal2", "teal3", "teal4", "teal5", "teal6", "teal7", "teal8", "teal9", "teal10"],
+          "kick": ["white"]
+    },
+    "Brume Grise": {
+          "sequence": ["gray1", "gray2", "gray3", "gray4", "gray5", "gray6", "gray7", "gray8", "gray9", "gray10"],
+          "kick": ["white"]
+    },
+    "Terre Brûlée": {
+          "sequence": ["brown1", "brown2", "brown3", "brown4", "brown5", "brown6", "brown7", "brown8", "brown9", "brown10"],
+          "kick": ["orange"]
     }
-    
 }

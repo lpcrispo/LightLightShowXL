@@ -65,7 +65,7 @@ def app_logic(input_device_index, output_device_index):
         time.sleep(0.002)  # 2 ms (réduction légère charge CPU)
 
 if __name__ == "__main__":
-    mainboard = MainBoard(p_theme="sunset", p_style="random")
+    mainboard = MainBoard(p_theme="random", p_style="random")
     main_view = MainView(app_logic)
     main_view.set_mainboard(mainboard)
     main_view.mainloop()

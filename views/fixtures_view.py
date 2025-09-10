@@ -110,31 +110,36 @@ class FixturesView:
                     # Déterminer quelle couleur afficher (kick ou sequence)
                     if fixture["kick_activated"]:
                         # Couleur de kick
-                        r = fixture["kick_red"]["value"]
-                        g = fixture["kick_green"]["value"]
-                        b = fixture["kick_blue"]["value"]
+                        r = int(fixture["kick_red"]["value"])
+                        g = int(fixture["kick_green"]["value"])
+                        b = int(fixture["kick_blue"]["value"])
                         
                         # Indicateur de status (rouge pour kick actif)
                         widgets['canvas'].itemconfig(widgets['status_indicator'], fill="red")
-                    elif fixture["repos_activated"]:
+                    elif fixture.get("repos_activated", False):
                         # Couleur de repos
-                        r = fixture["repos_red"]["value"]
-                        g = fixture["repos_green"]["value"]
-                        b = fixture["repos_blue"]["value"]
+                        r = int(fixture.get("repos_red", {}).get("value", 0))
+                        g = int(fixture.get("repos_green", {}).get("value", 0))
+                        b = int(fixture.get("repos_blue", {}).get("value", 0))
                         
                         # Indicateur de status (bleu pour mode repos)
                         widgets['canvas'].itemconfig(widgets['status_indicator'], fill="blue")
                     else:
                         # Couleur de sequence
-                        r = fixture["sequence_red"]["value"]
-                        g = fixture["sequence_green"]["value"]
-                        b = fixture["sequence_blue"]["value"]
+                        r = int(fixture["sequence_red"]["value"])
+                        g = int(fixture["sequence_green"]["value"])
+                        b = int(fixture["sequence_blue"]["value"])
                         
                         # Indicateur de status
                         if fixture["kick_respond"]:
                             widgets['canvas'].itemconfig(widgets['status_indicator'], fill="green")  # Vert si prêt pour kick
                         else:
                             widgets['canvas'].itemconfig(widgets['status_indicator'], fill="gray")   # Gris si pas de kick
+                    
+                    # S'assurer que les valeurs RGB sont dans la plage valide (0-255)
+                    r = max(0, min(255, r))
+                    g = max(0, min(255, g))
+                    b = max(0, min(255, b))
                     
                     # Mettre à jour le carré de couleur
                     hex_color = f"#{r:02x}{g:02x}{b:02x}"
@@ -145,6 +150,8 @@ class FixturesView:
                     
         except Exception as e:
             print(f"Erreur dans update_fixture_colors: {e}")
+            # Debug info pour identifier le problème
+            print(f"Debug - r:{r}, g:{g}, b:{b}, hex:{hex_color}")
     
     def destroy(self):
         """Nettoie la vue"""
@@ -275,23 +282,28 @@ class FixturesInlineView:
                     # Déterminer quelle couleur afficher (kick ou sequence)
                     if fixture["kick_activated"]:
                         # Couleur de kick
-                        r = fixture["kick_red"]["value"]
-                        g = fixture["kick_green"]["value"]
-                        b = fixture["kick_blue"]["value"]
+                        r = int(fixture["kick_red"]["value"])
+                        g = int(fixture["kick_green"]["value"])
+                        b = int(fixture["kick_blue"]["value"])
                         
                         # Indicateur de status (rouge pour kick actif)
                         widgets['canvas'].itemconfig(widgets['status_indicator'], fill="red")
                     else:
                         # Couleur de sequence
-                        r = fixture["sequence_red"]["value"]
-                        g = fixture["sequence_green"]["value"]
-                        b = fixture["sequence_blue"]["value"]
+                        r = int(fixture["sequence_red"]["value"])
+                        g = int(fixture["sequence_green"]["value"])
+                        b = int(fixture["sequence_blue"]["value"])
                         
                         # Indicateur de status
                         if fixture["kick_respond"]:
                             widgets['canvas'].itemconfig(widgets['status_indicator'], fill="green")  # Vert si prêt pour kick
                         else:
                             widgets['canvas'].itemconfig(widgets['status_indicator'], fill="gray")   # Gris si pas de kick
+                    
+                    # S'assurer que les valeurs RGB sont dans la plage valide (0-255)
+                    r = max(0, min(255, r))
+                    g = max(0, min(255, g))
+                    b = max(0, min(255, b))
                     
                     # Mettre à jour le carré de couleur
                     hex_color = f"#{r:02x}{g:02x}{b:02x}"
@@ -302,6 +314,11 @@ class FixturesInlineView:
                     
         except Exception as e:
             print(f"Erreur dans update_fixture_colors inline: {e}")
+            # Debug info pour identifier le problème
+            try:
+                print(f"Debug - r:{r}, g:{g}, b:{b}, hex:{hex_color}")
+            except:
+                print("Debug - variables not accessible")
     
     def destroy(self):
         """Nettoie la vue"""
