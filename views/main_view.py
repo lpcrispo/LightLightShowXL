@@ -16,6 +16,7 @@ class MainView(tk.Tk):
         # Section audio en haut à gauche
         self.audio_selector = AudioDeviceSelector(top_frame)
         self.audio_selector.pack(side='left')
+    
 
         # Passe une lambda qui fournit l'index input choisi
         start_btn = StartButton(
@@ -34,6 +35,22 @@ class MainView(tk.Tk):
             command=self.show_fixtures_monitor
         )
         fixtures_window_btn.pack(side='left', padx=10)
+        
+        # Bouton pour configurer les fixtures
+        fixtures_config_btn = tk.Button(
+            top_frame,
+            text="Config Fixtures",
+            command=self.show_fixtures_config
+        )
+        fixtures_config_btn.pack(side='left', padx=10)
+        
+        # Bouton pour configurer les thèmes et couleurs
+        themes_config_btn = tk.Button(
+            top_frame,
+            text="Config Thèmes",
+            command=self.show_themes_config
+        )
+        themes_config_btn.pack(side='left', padx=10)
         
         # Espace vide pour pousser le contenu vers le haut
         middle_frame = tk.Frame(self)
@@ -54,3 +71,13 @@ class MainView(tk.Tk):
             return
         from views.fixtures_view import create_fixtures_monitor
         create_fixtures_monitor(self, self.mainboard)
+        
+    def show_fixtures_config(self):
+        """Affiche la fenêtre de configuration des fixtures"""
+        from views.Fixtures_config import create_fixtures_config_window
+        create_fixtures_config_window(self)
+        
+    def show_themes_config(self):
+        """Affiche la fenêtre de configuration des thèmes et couleurs"""
+        from views.Themes_and_colors_config import create_themes_colors_config_window
+        create_themes_colors_config_window(self)

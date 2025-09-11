@@ -332,7 +332,7 @@ def create_fixtures_monitor(parent_window, mainboard):
     """Crée une fenêtre de monitoring des fixtures"""
     monitor_window = tk.Toplevel(parent_window)
     monitor_window.title("Fixtures Monitor - LightLightShowXL")
-    monitor_window.geometry("900x700")
+    monitor_window.geometry("1500x300")
     
     fixtures_view = FixturesView(monitor_window, mainboard)
     
