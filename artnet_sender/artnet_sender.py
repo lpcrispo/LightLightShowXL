@@ -23,6 +23,10 @@ class ArtNetSender:
                 r = fixture["kick_red"]["value"]
                 g = fixture["kick_green"]["value"]
                 b = fixture["kick_blue"]["value"]
+            elif fixture["repos_activated"]:
+                r = fixture["repos_red"]["value"]
+                g = fixture["repos_green"]["value"]
+                b = fixture["repos_blue"]["value"]
             else:
                 r = fixture["sequence_red"]["value"]
                 g = fixture["sequence_green"]["value"]

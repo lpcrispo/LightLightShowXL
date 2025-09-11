@@ -1,60 +1,662 @@
 {
     "LED Par 64 1": {
-            "name": "LED Par 64 1",
-            "type": "par",
-            "manufacturer": "Generic",
-            "dmx_address": 1,
-            "channel_count": 8,
-            "channels": {
-                "dimmer": {"id":1,"default": 255, "min": 0, "max": 255},
-                "red": {"id":2,"default": 0, "min": 0, "max": 255},
-                "green": {"id":3,"default": 0, "min": 0, "max": 255},
-                "blue": {"id":4,"default": 0, "min": 0, "max": 255},
-                "speed": {"id":5,"default": 0, "min": 0, "max": 255},
-                "fadeefx": {"id":6,"default": 0, "min": 0, "max": 255},
-                "flashefx": {"id":7,"default": 0, "min": 0, "max": 255},
-                "colorchange": {"id":8,"default": 0, "min": 0, "max": 255}
+        "name": "LED Par 64 1",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 1,
+        "channel_count": 8,
+        "channels": {
+            "dimmer": {
+                "id": 1,
+                "default": 255,
+                "min": 0,
+                "max": 255
             },
-            "kick_respond": true
+            "red": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "speed": {
+                "id": 5,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "fadeefx": {
+                "id": 6,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "flashefx": {
+                "id": 7,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "colorchange": {
+                "id": 8,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
         },
-        "LED Par 64 2": {
-            "name": "LED Par 64 2",
-            "type": "par",
-            "manufacturer": "Generic",
-            "dmx_address": 9,
-            "channel_count": 4,
-            "channels": {
-                "red": {"id":1,"default": 0, "min": 0, "max": 255},
-                "green": {"id":2,"default": 0, "min": 0, "max": 255},
-                "blue": {"id":3,"default": 0, "min": 0, "max": 255},
-                "white": {"id":4,"default": 0, "min": 0, "max": 255}
+        "kick_respond": true
+    },
+    "par32 1": {
+        "name": "par32 1",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 9,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
             },
-            "kick_respond": true
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
         },
-        "Moving Head Spot 1": {
-            "name": "Moving Head Spot 1",
-            "type": "moving_head",
-            "manufacturer": "Generic",
-            "dmx_address": 13,
-            "channel_count": 16,
-            "channels": {
-                "pan_coarse": {"id":1,"default": 0, "min": 0, "max": 255},
-                "pan_fine": {"id":2,"default": 0, "min": 0, "max": 255},
-                "tilt_coarse": {"id":3,"default": 0, "min": 0, "max": 255},
-                "tilt_fine": {"id":4,"default": 0, "min": 0, "max": 255},
-                "pan_tilt_speed": {"id":5,"default": 0, "min": 0, "max": 255},
-                "dimmer": {"id":6,"default": 0, "min": 0, "max": 255},
-                "shutter_strobe": {"id":7,"default": 0, "min": 0, "max": 255},
-                "red": {"id":8,"default": 0, "min": 0, "max": 255},
-                "green": {"id":9,"default": 0, "min": 0, "max": 255},
-                "blue": {"id":10,"default": 0, "min": 0, "max": 255},
-                "white": {"id":11,"default": 0, "min": 0, "max": 255},
-                "color_wheel": {"id":12,"default": 0, "min": 0, "max": 255},
-                "gobo_wheel": {"id":13,"default": 0, "min": 0, "max": 255},
-                "prism": {"id":14,"default": 0, "min": 0, "max": 255},
-                "focus": {"id":15,"default": 0, "min": 0, "max": 255},
-                "reset": {"id":16,"default": 0, "min": 0, "max": 255}
+        "kick_respond": false
+    },
+    "par32 2": {
+        "name": "par32 2",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 13,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
             },
-            "kick_respond": false
-        }
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 3": {
+        "name": "par32 3",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 17,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 4": {
+        "name": "par32 4",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 21,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 5": {
+        "name": "par32 5",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 25,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 6": {
+        "name": "par32 6",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 29,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 7": {
+        "name": "par32 7",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 33,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 8": {
+        "name": "par32 8",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 37,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 9": {
+        "name": "par32 9",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 41,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 10": {
+        "name": "par32 10",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 45,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 11": {
+        "name": "par32 11",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 49,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 12": {
+        "name": "par32 12",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 53,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 13": {
+        "name": "par32 13",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 57,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 14": {
+        "name": "par32 14",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 61,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 15": {
+        "name": "par32 15",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 65,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "par32 16": {
+        "name": "par32 16",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 69,
+        "channel_count": 4,
+        "channels": {
+            "red": {
+                "id": 1,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "white": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": false
+    },
+    "LED Par 64 2": {
+        "name": "LED Par 64 2",
+        "type": "par",
+        "manufacturer": "Generic",
+        "dmx_address": 73,
+        "channel_count": 8,
+        "channels": {
+            "dimmer": {
+                "id": 1,
+                "default": 255,
+                "min": 0,
+                "max": 255
+            },
+            "red": {
+                "id": 2,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "id": 3,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "id": 4,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "speed": {
+                "id": 5,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "fadeefx": {
+                "id": 6,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "flashefx": {
+                "id": 7,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            },
+            "colorchange": {
+                "id": 8,
+                "default": 0,
+                "min": 0,
+                "max": 255
+            }
+        },
+        "kick_respond": true
+    }
 }
