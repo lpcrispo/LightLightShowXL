@@ -158,5 +158,125 @@
     "Terre Brûlée": {
           "sequence": ["brown1", "brown2", "brown3", "brown4", "brown5", "brown6", "brown7", "brown8", "brown9", "brown10"],
           "kick": ["orange"]
-    }
+    },
+    "rgb_bounce": {
+    "sequence": ["red", "blue", "green", "blue"],
+    "kick": ["white", "red"]
+  },
+  "triad_cycle": {
+    "sequence": ["red", "green", "blue", "green"],
+    "kick": ["white"]
+  },
+  "red_blue_breath": {
+    "sequence": ["red", "purple5", "blue", "purple5"],
+    "kick": ["white", "red"]
+  },
+  "fire_breath": {
+    "sequence": ["red", "orange8", "yellow6", "orange8"],
+    "kick": ["white", "amber"]
+  },
+  "lava_core": {
+    "sequence": ["red8", "red4", "orange7", "red4"],
+    "kick": ["white", "red"]
+  },
+  "sunset_mix": {
+    "sequence": ["purple8", "purple5", "pink6", "orange7", "pink6", "purple5"],
+    "kick": ["amber", "white"]
+  },
+  "ocean_pulse": {
+    "sequence": ["blue10", "blue7", "teal6", "teal3", "cyan", "teal3", "teal6", "blue7"],
+    "kick": ["white", "cyan"]
+  },
+  "ice_flash": {
+    "sequence": ["coolWhite", "lightBlue", "teal3", "lightBlue"],
+    "kick": ["white"]
+  },
+  "forest_wave": {
+    "sequence": ["green10", "green7", "green4", "green1", "mintGreen", "green1", "green4", "green7"],
+    "kick": ["white", "lime"]
+  },
+  "emerald_bounce": {
+    "sequence": ["green6", "green3", "green1", "green3"],
+    "kick": ["white"]
+  },
+  "pastel_drift": {
+    "sequence": ["pink2", "lightYellow", "lightBlue", "lightYellow"],
+    "kick": ["white"]
+  },
+  "cyber_neon": {
+    "sequence": ["magenta", "blue5", "cyan", "blue5"],
+    "kick": ["white", "magenta"]
+  },
+  "amber_glow": {
+    "sequence": ["amber", "orange6", "yellow5", "orange6"],
+    "kick": ["white"]
+  },
+  "warm_bounce": {
+    "sequence": ["orange9", "orange7", "orange5", "orange7"],
+    "kick": ["white", "amber"]
+  },
+  "strobe_contrast": {
+    "sequence": ["black", "white"],
+    "kick": ["white"]
+  },
+  "white_to_color_cycle": {
+    "sequence": ["white", "blue3", "white", "pink4", "white", "green4", "white", "purple6"],
+    "kick": ["white"]
+  },
+  "turquoise_shift": {
+    "sequence": ["turquoise", "teal4", "cyan", "teal4"],
+    "kick": ["white", "turquoise"]
+  },
+  "royal_pulse": {
+    "sequence": ["purple10", "purple7", "purple4", "purple7"],
+    "kick": ["white", "purple10"]
+  },
+  "glacial_fade": {
+    "sequence": ["coolWhite", "lightBlue", "teal2", "lightBlue"],
+    "kick": ["white"]
+  },
+  "chromatic_rainbow_bounce": {
+    "sequence": ["red", "orange6", "yellow5", "green5", "teal5", "blue6", "purple6", "pink6", "purple6", "blue6", "teal5", "green5", "yellow5", "orange6"],
+    "kick": ["white"]
+  },
+  "Progression Chaleur": {
+    "sequence": ["red", "orange8", "amber", "yellow6", "white"],
+    "kick": ["white", "red"]
+  },
+  "Espace Profond": {
+    "sequence": ["black", "navy", "darkBlue", "indigo", "purple10", "magenta"],
+    "kick": ["white"]
+  },
+  "Choc Électrique": {
+    "sequence": ["blue", "cyan", "white", "magenta", "blue6"],
+    "kick": ["white"]
+  },
+  "Mélange Acide": {
+    "sequence": ["lime", "yellow", "cyan", "magenta", "red"],
+    "kick": ["white"]
+  },
+  "Balayage Furtif": {
+    "sequence": ["black", "gray5", "gray8", "white", "gray3"],
+    "kick": ["white"]
+  },
+  "Caméra Thermique": {
+    "sequence": ["blue6", "teal5", "green5", "yellow5", "orange6", "red5"],
+    "kick": ["white", "red6"]
+  },
+  "Paliers Voltage": {
+    "sequence": ["purple6", "blue6", "cyan", "green5", "yellow5"],
+    "kick": ["white"]
+  },
+  "Crépuscule Désert": {
+    "sequence": ["warmWhite", "gold", "orange7", "red5", "purple5"],
+    "kick": ["amber", "white"]
+  },
+  "Bonbon Menthe": {
+    "sequence": ["mintGreen", "lightPink", "lightYellow", "lightBlue", "lavender"],
+    "kick": ["white"]
+  },
+  "Front Orageux": {
+    "sequence": ["darkBlue", "blue6", "gray5", "white", "blue10"],
+    "kick": ["white"]
+  }
 }

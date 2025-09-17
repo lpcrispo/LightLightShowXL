@@ -126,5 +126,9 @@
   "gray7": {"red":137, "green": 137, "blue": 137},
   "gray8": {"red":119, "green": 119, "blue": 119},
   "gray9": {"red":101, "green": 101, "blue": 101},
-  "gray10": {"red":50, "green": 50, "blue": 50}
+  "gray10": {"red":50, "green": 50, "blue": 50},
+  "amber": { "red":255, "green":191, "blue":0 },
+  "turquoise": { "red":64, "green":224, "blue":208 },
+  "warmWhite": { "red":255, "green":244, "blue":229 },
+  "coolWhite": { "red":240, "green":255, "blue":255 }
 }
